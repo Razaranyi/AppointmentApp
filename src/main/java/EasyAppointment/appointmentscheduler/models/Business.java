@@ -1,7 +1,6 @@
 package EasyAppointment.appointmentscheduler.models;
 
 import jakarta.persistence.*;
-
 import java.util.Set;
 
 @Entity
@@ -48,5 +47,4 @@ public class Business {
         this.owner = owner;
     }
 
-    // Getters and setters
 }
