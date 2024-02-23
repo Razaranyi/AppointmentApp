@@ -1,34 +1,57 @@
 package EasyAppointment.appointmentscheduler.models;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 public class Business {
+    public Business() {
+
+    }
+    public Business( String name) {
+        this.name = name;
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "business_sequence",
+            sequenceName = "business_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "business_sequence"
+    )
+    @Column(name = "business_id", updatable = false)
     private Long id;
 
+    @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User owner;
+    @OneToMany(mappedBy = "business")
+    private Set<Branch> branches;
+
+    @OneToMany(mappedBy = "business")
+    private Set<Favorite> favorites = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "business_category",
-            joinColumns = @JoinColumn(name = "business_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
+            joinColumns = @JoinColumn(
+                    name = "business_id",
+                    foreignKey = @ForeignKey(name = "FK_Business_Category")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "category_id",
+                    foreignKey = @ForeignKey(name = "FK_Category_Business")
+            )
     )
-    private Set<Category> categories;
+    private Set<Category> businessCategories = new HashSet<>();
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -37,14 +60,6 @@ public class Business {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 
 }

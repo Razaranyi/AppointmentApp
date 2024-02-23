@@ -1,16 +1,53 @@
 package EasyAppointment.appointmentscheduler.models;
 import jakarta.persistence.*;
 
-@Entity
+import java.util.HashSet;
+import java.util.Set;
+
+import static jakarta.persistence.GenerationType.SEQUENCE;
+
+@Entity(name = "User")
+@Table(name = "\"user\"")
+
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE
+            , generator = "user_sequence")
 
+    @Column(name = "user_id", updatable = false)
+    private Long id;
+    @Column(name = "full_name", nullable = false, columnDefinition = "TEXT")
     private String fullName;
+    @Column(name = "email", nullable = false, columnDefinition = "TEXT",unique = true)
     private String email;
+    @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
-    private Boolean isAdmin;
+    @Column(name = "is_admin", nullable = false)
+    private boolean isAdmin;
+    @OneToMany(mappedBy = "user")
+    private Set<Booking> bookings;
+
+    @OneToMany (mappedBy = "user")
+    private Set<Favorite> favorites = new HashSet<>();
+
+    public User() {
+
+    }
+
+    public User(String fullName, String email, String password, boolean isAdmin) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -33,7 +70,7 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public Boolean getIsAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
     public void setIsAdmin(Boolean isAdmin) {
