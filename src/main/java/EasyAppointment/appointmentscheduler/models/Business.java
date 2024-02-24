@@ -7,13 +7,6 @@ import java.util.Set;
 
 @Entity
 public class Business {
-    public Business() {
-
-    }
-    public Business( String name) {
-        this.name = name;
-    }
-
     @Id
     @SequenceGenerator(
             name = "business_sequence",
@@ -49,6 +42,19 @@ public class Business {
             )
     )
     private Set<Category> businessCategories = new HashSet<>();
+    @OneToMany(mappedBy = "business")
+    private Set<User> users = new HashSet<>();
+
+    public Business() {
+
+    }
+
+    public Business(Long id, String name, Set<Category> businessCategories, Set<User> users) {
+        this.id = id;
+        this.name = name;
+        this.businessCategories = businessCategories;
+        this.users = users;
+    }
 
     public Long getId() {
         return id;

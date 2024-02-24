@@ -1,13 +1,10 @@
-package EasyAppointment.appointmentscheduler.Controllers;
+package EasyAppointment.appointmentscheduler.controllers;
 
-import EasyAppointment.appointmentscheduler.Services.UserService;
-import EasyAppointment.appointmentscheduler.models.User;
+import EasyAppointment.appointmentscheduler.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 @RestController
 @RequestMapping("api/v1/user")
 public class UserController {

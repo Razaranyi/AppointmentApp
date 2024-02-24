@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.Repositories;
+package EasyAppointment.appointmentscheduler.repositories;
 
 import EasyAppointment.appointmentscheduler.models.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,5 +1,7 @@
 package EasyAppointment.appointmentscheduler.models;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,8 +9,7 @@ import java.util.Set;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "User")
-@Table(name = "\"user\"")
-
+@Table(name = "users")
 public class User {
     @Id
     @SequenceGenerator(
@@ -17,24 +18,34 @@ public class User {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = SEQUENCE
-            , generator = "user_sequence")
-
+            strategy = SEQUENCE,
+            generator = "user_sequence"
+    )
     @Column(name = "user_id", updatable = false)
     private Long id;
+
     @Column(name = "full_name", nullable = false, columnDefinition = "TEXT")
     private String fullName;
-    @Column(name = "email", nullable = false, columnDefinition = "TEXT",unique = true)
+
+    @Email(message = "Email is not valid")
+    @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
     private String email;
+
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
+
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
+
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
 
-    @OneToMany (mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     private Set<Favorite> favorites = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_User"))
+    private Business business;
 
     public User() {
 
@@ -46,6 +57,8 @@ public class User {
         this.password = password;
         this.isAdmin = isAdmin;
     }
+
+
 
 
     public Long getId() {
@@ -68,6 +81,7 @@ public class User {
         return password;
     }
     public void setPassword(String password) {
+
         this.password = password;
     }
     public boolean getIsAdmin() {
