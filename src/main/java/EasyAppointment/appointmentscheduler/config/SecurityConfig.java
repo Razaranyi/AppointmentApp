@@ -32,7 +32,7 @@ public class SecurityConfig {
                        .anyRequest().authenticated()
                 )
                .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/api/login")
                         .permitAll()
                )
                 .logout(LogoutConfigurer::permitAll);

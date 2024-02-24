@@ -1,10 +1,6 @@
 package EasyAppointment.appointmentscheduler;
 
-import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
-import EasyAppointment.appointmentscheduler.repositories.UserRepository;
-import EasyAppointment.appointmentscheduler.models.Business;
-import EasyAppointment.appointmentscheduler.models.User;
-import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

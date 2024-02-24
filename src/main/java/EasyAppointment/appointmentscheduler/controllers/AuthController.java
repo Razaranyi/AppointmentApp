@@ -4,9 +4,14 @@ import EasyAppointment.appointmentscheduler.DTO.UserDTO;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
 import EasyAppointment.appointmentscheduler.services.UserService;
 import jakarta.validation.Valid;
+import org.apache.catalina.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +49,23 @@ public class AuthController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+//    @PostMapping("/sign-in")
+//    public ResponseEntity<?> signIn(@RequestBody LoginDTO loginDTO) {
+//        Authenticator authenticationManager = null;
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        // Assuming a token-based authentication
+//        CookieCsrfTokenRepository tokenProvider;
+//        String jwt = tokenProvider.generateToken(authentication);
+//
+//        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+//    }
+
+
 }
 
 
