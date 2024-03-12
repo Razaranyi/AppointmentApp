@@ -2,15 +2,28 @@ package EasyAppointment.appointmentscheduler.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity(name = "User")
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
+    @Getter
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -24,18 +37,24 @@ public class User {
     @Column(name = "user_id", updatable = false)
     private Long id;
 
+    @Setter
+    @Getter
     @Column(name = "full_name", nullable = false, columnDefinition = "TEXT")
     private String fullName;
 
+    @Setter
+    @Getter
     @Email(message = "Email is not valid")
     @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
     private String email;
 
+    @Getter
+    @Setter
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
 
-    @Column(name = "is_admin", nullable = false)
-    private boolean isAdmin;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
@@ -47,62 +66,48 @@ public class User {
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_User"))
     private Business business;
 
-    public User() {
-
-    }
-
-    public User(String fullName, String email, String password, boolean isAdmin) {
+    public User(String fullName, String email, String encode) {
         this.fullName = fullName;
         this.email = email;
-        this.password = password;
-        this.isAdmin = isAdmin;
+        this.password = encode;
     }
 
 
-
-
-    public Long getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-    public String getEmail() {
+
+    @Override
+    public String getUsername() {
         return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-
-        this.password = password;
-    }
-    public boolean getIsAdmin() {
-        return isAdmin;
-    }
-    public void setIsAdmin(Boolean isAdmin) {
-        this.isAdmin = isAdmin;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", isAdmin=" + isAdmin +
-                '}';
+    public String getPassword() {
+        return password;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 
 
