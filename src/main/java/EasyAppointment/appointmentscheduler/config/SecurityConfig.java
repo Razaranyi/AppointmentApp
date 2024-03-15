@@ -1,5 +1,6 @@
 package EasyAppointment.appointmentscheduler.config;
 
+import EasyAppointment.appointmentscheduler.models.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,9 +37,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests ->
                          requests.requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/business/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/home/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/business/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/user/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        .requestMatchers("/api/home/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
                         .anyRequest().
                                  authenticated()
                 )
