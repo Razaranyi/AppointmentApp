@@ -1,6 +1,8 @@
 package EasyAppointment.appointmentscheduler.auth;
 
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.AuthenticationRequest;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

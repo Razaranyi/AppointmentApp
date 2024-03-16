@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static EasyAppointment.appointmentscheduler.models.Role.ADMIN;
+import static EasyAppointment.appointmentscheduler.models.Role.USER;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
@@ -37,9 +40,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests ->
                          requests.requestMatchers(WHITE_LIST_URL)
                         .permitAll()
-                        .requestMatchers("/api/business/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/user/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                        .requestMatchers("/api/home/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        .requestMatchers("/api/businesses/my-business/**").hasRole(ADMIN.name())
+                        .requestMatchers(POST,"/api/businesses/create/**").hasAnyRole(USER.name(), ADMIN.name())
+                        .requestMatchers("/api/user/**").hasAnyRole(ADMIN.name(), USER.name())
+                        .requestMatchers("/api/home/**").hasAnyRole(ADMIN.name(), USER.name())
                         .anyRequest().
                                  authenticated()
                 )

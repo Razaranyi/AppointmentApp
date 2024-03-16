@@ -5,6 +5,8 @@ import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
 import EasyAppointment.appointmentscheduler.models.Role;
 import EasyAppointment.appointmentscheduler.models.User;
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.AuthenticationRequest;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

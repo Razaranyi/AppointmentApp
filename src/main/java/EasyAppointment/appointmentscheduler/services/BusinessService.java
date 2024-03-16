@@ -1,13 +1,19 @@
 package EasyAppointment.appointmentscheduler.services;
 
+import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreatedResponse;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreationRequest;
+import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnsBusinessException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Category;
 import EasyAppointment.appointmentscheduler.models.User;
+import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
 import EasyAppointment.appointmentscheduler.repositories.CategoryRepository;
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import EasyAppointment.appointmentscheduler.models.Role;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +24,34 @@ import java.util.stream.Collectors;
 public class BusinessService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final BusinessRepository businessRepository;
+
+
+    public BusinessCreatedResponse createBusiness(BusinessCreationRequest request, String userEmail)
+    throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
+         User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+         if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
+             throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
+         }
+        Business newBusiness = Business.builder()
+                .name(request.getBusinessDTO().getName())
+                .businessCategories(request.getBusinessDTO().getBusinessCategories())
+                .users(new HashSet<>(Collections.singletonList(user))) // Associate the user with the new business
+                .build();
+                Business savedBusiness = businessRepository.save(newBusiness);
+                userService.updateUserRole(userEmail, Role.ADMIN);
+                user.setBusiness(newBusiness);
+                userRepository.save(user);
+
+
+
+        return BusinessCreatedResponse.builder()
+                            .message("Business created successfully")
+                            .business(savedBusiness)
+                            .build();
+    }
 
     public List<Business> getBusinessesByCategory(String categoryName) {
         return categoryRepository.findByName(categoryName)

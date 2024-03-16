@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.auth;
+package EasyAppointment.appointmentscheduler.requestsAndResponses;
 
 import EasyAppointment.appointmentscheduler.models.Role;
 import lombok.AllArgsConstructor;
