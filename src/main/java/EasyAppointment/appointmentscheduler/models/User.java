@@ -56,12 +56,16 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Getter
+    @Setter
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
 
     @OneToMany(mappedBy = "user")
     private Set<Favorite> favorites = new HashSet<>();
 
+    @Getter
+    @Setter
     @ManyToOne
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_User"))
     private Business business;
@@ -71,7 +75,6 @@ public class User implements UserDetails {
         this.email = email;
         this.password = encode;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

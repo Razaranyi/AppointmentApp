@@ -1,12 +1,14 @@
 package EasyAppointment.appointmentscheduler.controllers;
 
+import EasyAppointment.appointmentscheduler.models.Favorite;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import EasyAppointment.appointmentscheduler.services.FavoriteService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,9 +16,10 @@ import EasyAppointment.appointmentscheduler.services.FavoriteService;
 public class FavoriteController {
     private final FavoriteService favoriteService;
 
-    @GetMapping("user/{userId}")
-    public ResponseEntity<?> getFavoritesByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(favoriteService.getFavoritesByUser(userId));
+    @GetMapping("/my-favorites")
+    public ResponseEntity<List<Favorite>> getMyFavorites() {
+        List<Favorite> favorites = favoriteService.getFavoritesForAuthenticatedUser();
+        return ResponseEntity.ok(favorites);
     }
 
 }
