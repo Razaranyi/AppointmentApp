@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.Category;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,13 +12,12 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+public class BusinessDTO implements DTOInterface {
 
-public class BusinessDTO {
-    @Getter
-    @Setter
     private String name;
-    @Getter
-    @Setter
+
     private Set<Category> businessCategories;
 
 }

@@ -52,6 +52,8 @@ public class Business {
                     foreignKey = @ForeignKey(name = "FK_Category_Business")
             )
     )
+    @Getter
+    @Setter
     private Set<Category> businessCategories = new HashSet<>();
     @OneToMany(mappedBy = "business")
     private Set<User> users = new HashSet<>();

@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.requestsAndResponses;
+package EasyAppointment.appointmentscheduler.requestsAndResponses.business;
 
 import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
 import lombok.*;

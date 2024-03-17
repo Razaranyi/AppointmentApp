@@ -1,8 +1,9 @@
 package EasyAppointment.appointmentscheduler.controllers;
 
-import EasyAppointment.appointmentscheduler.repositories.UserRepository;
-import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreatedResponse;
-import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreationRequest;
+import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.business.BusinessCreationRequest;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnsBusinessException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.services.BusinessService;
@@ -33,14 +34,16 @@ public class BusinessController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<BusinessCreatedResponse> createBusiness(@RequestBody BusinessCreationRequest request, Authentication authentication){
+    public ResponseEntity<ApiResponse<BusinessDTO>> createBusiness(@RequestBody ApiRequest<BusinessDTO> request, Authentication authentication){
         try{
             String userEmail = authentication.getName(); // Gets the email from the current authentication principal
-            return ResponseEntity.ok(businessService.createBusiness(request, userEmail));
+            return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
         } catch (UserAlreadyOwnsBusinessException | UsernameNotFoundException e ) {
             return ResponseEntity.badRequest().body(
-                    BusinessCreatedResponse.builder()
+                    ApiResponse.<BusinessDTO>builder()
+                            .success(false)
                             .message(e.getMessage())
+                            .data(null)
                             .build());
         }
     }

@@ -111,6 +111,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void setFavorite(Favorite savedFavorite) {
+        favorites.add(savedFavorite);
+    }
 }
 
 

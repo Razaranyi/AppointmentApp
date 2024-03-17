@@ -1,7 +1,9 @@
 package EasyAppointment.appointmentscheduler.services;
 
-import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreatedResponse;
-import EasyAppointment.appointmentscheduler.requestsAndResponses.BusinessCreationRequest;
+import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.business.BusinessCreationRequest;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnsBusinessException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Category;
@@ -28,7 +30,7 @@ public class BusinessService {
     private final BusinessRepository businessRepository;
 
 
-    public BusinessCreatedResponse createBusiness(BusinessCreationRequest request, String userEmail)
+    public ApiResponse<BusinessDTO> addBusiness(ApiRequest<BusinessDTO> request, String userEmail)
     throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
          User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -36,8 +38,8 @@ public class BusinessService {
              throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
          }
         Business newBusiness = Business.builder()
-                .name(request.getBusinessDTO().getName())
-                .businessCategories(request.getBusinessDTO().getBusinessCategories())
+                .name(request.getData().getName())
+                .businessCategories(request.getData().getBusinessCategories())
                 .users(new HashSet<>(Collections.singletonList(user))) // Associate the user with the new business
                 .build();
                 Business savedBusiness = businessRepository.save(newBusiness);
@@ -45,12 +47,8 @@ public class BusinessService {
                 user.setBusiness(newBusiness);
                 userRepository.save(user);
 
-
-
-        return BusinessCreatedResponse.builder()
-                            .message("Business created successfully")
-                            .business(savedBusiness)
-                            .build();
+                BusinessDTO businessDTO = new BusinessDTO(savedBusiness.getName(), savedBusiness.getBusinessCategories());
+        return new ApiResponse<>(true, "Business created successfully", businessDTO);
     }
 
     public List<Business> getBusinessesByCategory(String categoryName) {

@@ -1,17 +1,15 @@
 package EasyAppointment.appointmentscheduler.requestsAndResponses;
 
-import EasyAppointment.appointmentscheduler.models.Business;
+import EasyAppointment.appointmentscheduler.DTO.DTOInterface;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BusinessCreatedResponse {
-
-        private String message;
-        private Business business;
+public class ApiRequest<T extends DTOInterface> {
+    private T data;
 }
