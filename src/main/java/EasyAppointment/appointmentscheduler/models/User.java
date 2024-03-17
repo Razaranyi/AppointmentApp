@@ -56,13 +56,17 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Getter
+    @Setter
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
 
     @OneToMany(mappedBy = "user")
     private Set<Favorite> favorites = new HashSet<>();
 
-    @ManyToOne
+    @Getter
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_User"))
     private Business business;
 
@@ -72,10 +76,9 @@ public class User implements UserDetails {
         this.password = encode;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return role.getAuthorities();
     }
 
 
@@ -107,6 +110,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setFavorite(Favorite savedFavorite) {
+        favorites.add(savedFavorite);
     }
 }
 

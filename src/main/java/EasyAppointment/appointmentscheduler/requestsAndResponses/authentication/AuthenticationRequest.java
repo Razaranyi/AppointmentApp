@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.auth;
+package EasyAppointment.appointmentscheduler.requestsAndResponses.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

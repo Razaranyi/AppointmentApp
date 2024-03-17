@@ -1,7 +1,7 @@
 package EasyAppointment.appointmentscheduler;
 
 import EasyAppointment.appointmentscheduler.auth.AuthController;
-import EasyAppointment.appointmentscheduler.auth.AuthenticationResponse;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationResponse;
 import EasyAppointment.appointmentscheduler.auth.AuthenticationService;
 import EasyAppointment.appointmentscheduler.auth.RegisterRequest;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;

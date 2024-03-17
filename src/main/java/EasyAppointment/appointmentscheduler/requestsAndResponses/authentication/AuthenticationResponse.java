@@ -1,5 +1,6 @@
-package EasyAppointment.appointmentscheduler.auth;
+package EasyAppointment.appointmentscheduler.requestsAndResponses.authentication;
 
+import EasyAppointment.appointmentscheduler.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,6 @@ import org.apache.catalina.connector.Response;
 public class AuthenticationResponse {
     private String token;
     private String message;
-
     public AuthenticationResponse(String token) {
         this.token = token;
     }

@@ -1,9 +1,18 @@
 package EasyAppointment.appointmentscheduler.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.Set;
 
 @Entity
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Favorite {
     @Id
     @SequenceGenerator(
@@ -20,38 +29,18 @@ public class Favorite {
     private Long id;
 
     @ManyToOne
+    @Setter
+    @JsonIgnore
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_Favorite_User"))
     private User user;
 
     @ManyToOne
+    @Setter
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Favorite_Business"))
     private Business business;
 
-    public Favorite() {
-    }
 
-    public Favorite(User user, Business business) {
-        this.user = user;
-        this.business = business;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Business getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
 }
+
+
+
