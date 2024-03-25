@@ -32,7 +32,7 @@ public class Business {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "business")
+    @OneToMany(mappedBy = "business",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Branch> branches;
 
     @Getter
