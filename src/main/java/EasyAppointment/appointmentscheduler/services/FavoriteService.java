@@ -54,8 +54,6 @@ public class FavoriteService {
     }
 
     private FavoriteDTO convertToDTO(Favorite favorite) {
-        // Assume FavoriteDTO has a constructor that takes a Favorite object
-        // or set properties individually based on your FavoriteDTO's structure
         return new FavoriteDTO(favorite.getId(), favorite.getUser().getId(), favorite.getBusiness().getId());
     }
 

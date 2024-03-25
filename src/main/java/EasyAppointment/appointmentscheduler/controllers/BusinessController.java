@@ -22,7 +22,7 @@ import java.util.Optional;
 public class BusinessController {
     private final BusinessService businessService;
 
-    @GetMapping("/my-business")
+    @GetMapping("/my-business")// fix this method to return all relevant business data
     public ResponseEntity<?> getMyBusiness(Authentication authentication) {
         String authenticatedUserEmail = authentication.getName(); // Gets the email from the current authentication principal
         Optional<Business> businessOptional = businessService.getBusinessByEmail(authenticatedUserEmail);

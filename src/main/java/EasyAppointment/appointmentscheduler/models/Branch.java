@@ -1,10 +1,16 @@
 package EasyAppointment.appointmentscheduler.models;
 
+import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.Set;
 
 @Entity
-public class Branch {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class  Branch {
     @Id
     @SequenceGenerator(
             name = "branch_sequence",
@@ -13,23 +19,29 @@ public class Branch {
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "branch_sequence")
+
     @Column(name = "branch_id", updatable = false)
+    @Getter
     private Long id;
 
+    @Setter
+    @Getter
     @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
+
+    @Getter
     @Column(name = "address", nullable = false, columnDefinition = "TEXT")
     private String address;
 
+    @Getter
+    @Setter
     @ManyToOne
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_Branch"))
     private Business business;
 
+    @Getter
     @OneToMany(mappedBy = "branch")
     private Set<ServiceProvider> serviceProviders;
-
-    public Branch() {
-    }
 
     public Branch(String name, String address, Business business, Set<ServiceProvider> serviceProviders) {
         this.name = name;
@@ -38,39 +50,5 @@ public class Branch {
         this.serviceProviders = serviceProviders;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Business getBusiness() {
-        return business;
-    }
-
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
-
-    public Set<ServiceProvider> getServiceProviders() {
-        return serviceProviders;
-    }
-
-    public void setServiceProviders(Set<ServiceProvider> serviceProviders) {
-        this.serviceProviders = serviceProviders;
-    }
 }
