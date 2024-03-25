@@ -10,16 +10,21 @@ import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BranchService {
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
+    private final BranchRepository branchRepository;
     public ApiResponse<BranchDTO> addBranch(ApiRequest<BranchDTO> request, String userEmail) throws RuntimeException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -32,13 +37,25 @@ public class BranchService {
                 .serviceProviders(request.getData().getServiceProviders())
                 .build();
         business.getBranches().add(newBranch);
-        businessRepository.save(business); // save business with new branch
+        businessRepository.save(business); // save business with new branch, using cascade
 
         BranchDTO branchDTO = new BranchDTO(newBranch);
 
         return new ApiResponse<>(true, "branch created successfully", branchDTO);
-
     }
 
+    public ApiResponse<List<BranchDTO>> getBranchesByAuthenticatedBusinessOwner() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserEmail = authentication.getName();
+        User user = userRepository.findByEmail(authenticatedUserEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));
+        Business business = businessRepository.findByUsersContains(user)
+                .orElseThrow(() -> new RuntimeException("Business not found for user: " + authenticatedUserEmail));
+        List<Branch> branches = branchRepository.findByBusiness(business);
 
+        List<BranchDTO> branchDTOs = branches.stream()
+                .map(BranchDTO::new)
+                .toList();
+        return new ApiResponse<>(true, "Branches fetched successfully", branchDTOs);
+    }
 }

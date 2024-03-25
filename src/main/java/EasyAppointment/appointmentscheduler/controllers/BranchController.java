@@ -10,11 +10,28 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/business/{businessId}/branch")
 @RequiredArgsConstructor
 public class BranchController {
     private final BranchService branchService;
+
+    @GetMapping("/get-all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(branchService.getBranchesByAuthenticatedBusinessOwner());
+        }catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<List<BranchDTO>>builder()
+                            .success(false)
+                            .message(e.getMessage())
+                            .data(null)
+                            .build());
+        }
+    }
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
