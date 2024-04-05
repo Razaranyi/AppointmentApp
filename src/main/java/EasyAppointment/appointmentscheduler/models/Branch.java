@@ -40,7 +40,7 @@ public class  Branch {
     private Business business;
 
     @Getter
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ServiceProvider> serviceProviders;
 
     public Branch(String name, String address, Business business, Set<ServiceProvider> serviceProviders) {

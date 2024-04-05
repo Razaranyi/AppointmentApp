@@ -20,7 +20,7 @@ public class BranchController {
 
     @GetMapping("/get-all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner(Authentication authentication) {
+    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner() {
         try {
             return ResponseEntity.ok(branchService.getBranchesByAuthenticatedBusinessOwner());
         }catch (RuntimeException e) {
@@ -35,7 +35,10 @@ public class BranchController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<BranchDTO>> createBranch(@RequestBody ApiRequest<BranchDTO> request, Authentication authentication, @PathVariable String businessId) {
+    public ResponseEntity<ApiResponse<BranchDTO>> createBranch(
+            @RequestBody ApiRequest<BranchDTO> request,
+            Authentication authentication,
+            @PathVariable String businessId) {
         try {
             String userEmail = authentication.getName();
             return ResponseEntity.ok(branchService.addBranch(request, userEmail));

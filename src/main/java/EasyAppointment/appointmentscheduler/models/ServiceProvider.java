@@ -1,11 +1,18 @@
 package EasyAppointment.appointmentscheduler.models;
 
+import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.Arrays;
 import java.util.Set;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceProvider {
+    @Getter
     @Id
     @SequenceGenerator(
             name = "serviceProvider_sequence",
@@ -19,76 +26,37 @@ public class ServiceProvider {
     @Column(name = "service_provider_id", updatable = false)
     private Long id;
 
+    @Setter
+    @Getter
     @Column(name = "name", nullable = false, columnDefinition = "TEXT")
     private String name;
 
+    @Getter
+    @Setter
     @Column(name = "working_days", nullable = false, columnDefinition = "TEXT")
-    private String workingDays;
+    private int[] workingDays;
 
-    @Column(name = "working_hours", nullable = false, columnDefinition = "TEXT")
+    @Setter
+    @Getter
+    @Column(name = "breakTime", nullable = false, columnDefinition = "TEXT")
     private String breakTime;
 
+    @Setter
+    @Getter
     @OneToMany(mappedBy = "serviceProvider")
     private Set<Appointment> appointments;
 
+    @Setter
+    @Getter
     @ManyToOne
     @JoinColumn(name = "branch_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Branch"))
     private Branch branch;
 
-    public ServiceProvider() {
-    }
-
-    public ServiceProvider(String name, String workingDays, String breakTime, Set<Appointment> appointments, Branch branch) {
-        this.name = name;
-        this.workingDays = workingDays;
-        this.breakTime = breakTime;
-        this.appointments = appointments;
-        this.branch = branch;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getWorkingDays() {
-        return workingDays;
-    }
-
-    public void setWorkingDays(String workingDays) {
-        this.workingDays = workingDays;
-    }
-
-    public String getBreakTime() {
-        return breakTime;
-    }
-
-    public void setBreakTime(String breakTime) {
-        this.breakTime = breakTime;
-    }
-
-    public Set<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(Set<Appointment> appointments) {
-        this.appointments = appointments;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    // Other fields, constructors, getters and setters
+//    public ServiceProvider (ServiceProviderDTO serviceProviderDTO){
+//        this.name = serviceProviderDTO.getName();
+//        this.workingDays = serviceProviderDTO.getWorkingDays();
+//        this.appointments = serviceProviderDTO.getAppointments();
+//        this.breakTime = Arrays.toString(serviceProviderDTO.getBreakTime());
+//        this.branch = serviceProviderDTO.getBranch();
+//    }
 }
