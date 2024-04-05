@@ -9,25 +9,21 @@ import EasyAppointment.appointmentscheduler.repositories.ServiceProviderReposito
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ServiceProviderService {
-    BranchRepository branchRepository;
-    ServiceProviderRepository serviceProviderRepository;
+    private final BranchRepository branchRepository;
+    private final ServiceProviderRepository serviceProviderRepository;
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId) {
         List<ServiceProviderDTO> serviceProviderDTOs;
         try{
             if (branchRepository.findById(branchId).isEmpty()){ //check if branch exists
-                return new ApiResponse<>(false, "Branch not found", null);
+                throw new NoSuchElementException("Branch not found");
             }
 
             //get service providers from branch and return it as a list of DTOs
@@ -36,7 +32,7 @@ public class ServiceProviderService {
                     .map(ServiceProviderDTO::new)
                     .toList();
         }catch (Exception e){
-            return new ApiResponse<>(false, "Error in processing service providers", null);
+            throw new RuntimeException("Error in fetching service providers: " + e.getMessage());
         }
         return new ApiResponse<>(true, "Service Providers fetched successfully", serviceProviderDTOs);
     }
@@ -47,16 +43,12 @@ public class ServiceProviderService {
             if (branchRepository.findById(branchId).isEmpty()){
                 return new ApiResponse<>(false, "Branch not found", null);
             }
-            ServiceProvider serviceProvider = branchRepository.findById(branchId).get().getServiceProviders().stream()
-                    .filter(sp -> sp.getId().equals(serviceProviderId))
-                    .findFirst()
-                    .orElse(null);
-            if (serviceProvider == null){
-                return new ApiResponse<>(false, "Service Provider not found", null);
-            }
+
+            ServiceProvider serviceProvider = serviceProviderRepository.findById(serviceProviderId).orElseThrow(()
+                    -> new NoSuchElementException("Service Provider not found"));
             serviceProviderDTO = new ServiceProviderDTO(serviceProvider);
         }catch (Exception e){
-            return new ApiResponse<>(false, "Error in processing service provider", null);
+            throw  new RuntimeException("Error in fetching service provider: " + e.getMessage());
         }
         return new ApiResponse<>(true, "Service Provider fetched successfully", serviceProviderDTO);
     }
@@ -77,6 +69,7 @@ public class ServiceProviderService {
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
                     .breakTime(Arrays.toString(request.getData().getBreakTime()))
+                    .branch(branchRepository.findById(branchId).get())
                     .build();
 
             //add service provider to the branch
@@ -84,7 +77,7 @@ public class ServiceProviderService {
             branchRepository.save(branchRepository.findById(branchId).get());
 
         }catch (Exception e){
-            return new ApiResponse<>(false, "Error in adding service provider", null);
+            return new ApiResponse<>(false, e.getMessage(), null);
         }
         return new ApiResponse<>(true, "Service Provider added successfully", new ServiceProviderDTO(serviceProvider));
     }
@@ -104,7 +97,7 @@ public class ServiceProviderService {
             branchRepository.findById(branchId).get().getServiceProviders().remove(serviceProvider);
             branchRepository.save(branchRepository.findById(branchId).get());
         }catch (Exception e){
-            return new ApiResponse<>(false, "Error in deleting service provider", null);
+            return new ApiResponse<>(false, "Error in deleting service provider: " + e.getMessage(), null);
         }
         return new ApiResponse<>(true, "Service Provider deleted successfully", serviceProvider);
     }

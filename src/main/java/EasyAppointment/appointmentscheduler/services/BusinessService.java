@@ -47,7 +47,7 @@ public class BusinessService {
                 user.setBusiness(newBusiness);
                 userRepository.save(user);
 
-                BusinessDTO businessDTO = new BusinessDTO(savedBusiness.getName(), savedBusiness.getBusinessCategories());
+                BusinessDTO businessDTO = new BusinessDTO(savedBusiness.getId(),savedBusiness.getName(), savedBusiness.getBusinessCategories());
         return new ApiResponse<>(true, "Business created successfully", businessDTO);
     }
 

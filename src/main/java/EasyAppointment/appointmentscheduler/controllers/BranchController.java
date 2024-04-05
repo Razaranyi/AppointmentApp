@@ -20,7 +20,7 @@ public class BranchController {
 
     @GetMapping("/get-all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner() {
+    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner(@PathVariable String businessId) {
         try {
             return ResponseEntity.ok(branchService.getBranchesByAuthenticatedBusinessOwner());
         }catch (RuntimeException e) {
@@ -41,7 +41,7 @@ public class BranchController {
             @PathVariable String businessId) {
         try {
             String userEmail = authentication.getName();
-            return ResponseEntity.ok(branchService.addBranch(request, userEmail));
+            return ResponseEntity.ok(branchService.addBranch(request, userEmail)); //change to businessId instead of userEmail and authenticate with helper
         }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
                     ApiResponse.<BranchDTO>builder()

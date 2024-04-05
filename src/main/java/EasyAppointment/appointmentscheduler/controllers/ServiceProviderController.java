@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/serviceProvider")
+@RequestMapping("/api/{businessId}/{branchId}/service-provider")
 @RequiredArgsConstructor
 public class ServiceProviderController {
     private final ServiceProviderService serviceProviderService;
@@ -23,10 +23,10 @@ public class ServiceProviderController {
     @GetMapping("/get-all")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<List<ServiceProviderDTO>>> getBranchesByAuthenticatedBusinessOwner(
-            @RequestBody ApiRequest<BranchDTO> request) {
+            @PathVariable Long businessId,
+            @PathVariable Long branchId) {
         try {
-            Long id = request.getData().getBranchId();
-            return ResponseEntity.ok(serviceProviderService.getServiceProviderListByBranch(id));
+            return ResponseEntity.ok(serviceProviderService.getServiceProviderListByBranch(branchId));
 
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
@@ -38,10 +38,11 @@ public class ServiceProviderController {
         }
     }
 
-    @GetMapping("/get/branch/{branchId}/ServiceProvider/{serviceProviderId}")
+    @GetMapping("/{serviceProviderId}/get")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<ServiceProviderDTO>> getServiceProviderById(
             @PathVariable Long branchId,
+            @PathVariable Long businessId,
             @PathVariable Long serviceProviderId) {
         try {
             return ResponseEntity.ok(serviceProviderService.getServiceProvidersById(branchId, serviceProviderId));
@@ -55,7 +56,7 @@ public class ServiceProviderController {
         }
     }
 
-    @PostMapping("/{branchId}/create")
+    @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse<ServiceProviderDTO>> createServiceProvider(
             @RequestBody ApiRequest<ServiceProviderDTO> request,
@@ -73,7 +74,7 @@ public class ServiceProviderController {
         }
     }
 
-    @DeleteMapping("/{branchId}/delete/{serviceProviderId}")
+    @DeleteMapping("/{serviceProviderId}/delete")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> deleteServiceProvider(
             @PathVariable Long branchId,

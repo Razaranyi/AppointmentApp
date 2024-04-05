@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 @Entity
+@Table(name = "service_provider")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +34,7 @@ public class ServiceProvider {
 
     @Getter
     @Setter
-    @Column(name = "working_days", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "workingDays", nullable = false, columnDefinition = "int[]")
     private int[] workingDays;
 
     @Setter

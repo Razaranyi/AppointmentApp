@@ -1,9 +1,7 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.Appointment;
-import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
-import EasyAppointment.appointmentscheduler.repositories.AppointmentRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +19,15 @@ public class ServiceProviderDTO implements DTOInterface{
     private int[] workingDays;
     private String[] breakTime;
     private Set<Appointment> appointments;
-    private Branch branch;
+    private Long branchId;
 
 
     public ServiceProviderDTO(ServiceProvider serviceProvider){
+        this.id = serviceProvider.getId();
         this.name = serviceProvider.getName();
         this.workingDays = serviceProvider.getWorkingDays();
         this.appointments = serviceProvider.getAppointments();
         this.breakTime = serviceProvider.getBreakTime().split("-");
-        this.branch = serviceProvider.getBranch();
+        this.branchId = serviceProvider.getBranch().getId();
     }
 }
