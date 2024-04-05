@@ -16,8 +16,8 @@ import java.util.Set;
 @Setter
 public class BusinessDTO implements DTOInterface {
 
+    private Long id;
     private String name;
-
     private Set<Category> businessCategories;
 
 }

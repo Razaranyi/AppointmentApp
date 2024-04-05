@@ -37,7 +37,7 @@ public class Business {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "business")
+    @OneToMany(mappedBy = "business",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Favorite> favorites = new HashSet<>();
 
     @ManyToMany
@@ -55,7 +55,10 @@ public class Business {
     @Getter
     @Setter
     private Set<Category> businessCategories = new HashSet<>();
+
     @OneToMany(mappedBy = "business")
+    @Getter
+    @Setter
     private Set<User> users = new HashSet<>();
 
     public Business(String name, Set<Category> businessCategories, Set<User> users) {
