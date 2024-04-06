@@ -10,6 +10,7 @@ import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
@@ -53,6 +54,7 @@ public class ServiceProviderService {
         return new ApiResponse<>(true, "Service Provider fetched successfully", serviceProviderDTO);
     }
 
+    @Transactional
     public ApiResponse<ServiceProviderDTO> addServiceProvider(Long branchId, ApiRequest<ServiceProviderDTO> request,String userEmail) {
         ServiceProvider serviceProvider;
 

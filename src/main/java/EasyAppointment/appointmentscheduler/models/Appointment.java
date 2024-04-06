@@ -1,10 +1,21 @@
 package EasyAppointment.appointmentscheduler.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
+
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Appointment {
+
+    @Getter
     @Id
     @SequenceGenerator(
             name = "appointment_sequence",
@@ -18,74 +29,39 @@ public class Appointment {
     @Column(name = "appointment_id", updatable = false)
     private Long id;
 
-    @Column (name = "start_time", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "start_time", nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull(message = "Start time is required")
+    @Future(message = "Start time must be in the future")
+    @Getter
+    @Setter
     private LocalDateTime startTime;
+
+    @Column(name = "end_time", nullable = false, columnDefinition = "TIMESTAMP")
+    @Getter
+    @Setter
+    private LocalDateTime endTime;
+
     @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN")
+    @NotNull(message = "Availability is required")
     private Boolean isAvailable;
+
+    @Getter
+    @Setter
     @Column(name = "duration", nullable = false, columnDefinition = "INTEGER")
+    @Positive(message = "Duration must be positive")
     private Integer duration; // in minutes
 
+    @Getter
+    @Setter
     @ManyToOne // Many appointments can be associated with one booking
     @JoinColumn(name = "booking_id", foreignKey = @ForeignKey(name = "FK_Booking_Appointment"))
     private Booking booking;
 
+    @Getter
+    @Setter
     @ManyToOne // Many appointments can be associated with one service provider
     @JoinColumn(name = "service_provider_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Appointment"))
     private ServiceProvider serviceProvider;
 
-    public Appointment() {
-    }
 
-    public Appointment(LocalDateTime startTime, Boolean isAvailable, Integer duration, Booking booking, ServiceProvider serviceProvider) {
-        this.startTime = startTime;
-        this.isAvailable = isAvailable;
-        this.duration = duration;
-        this.booking = booking;
-        this.serviceProvider = serviceProvider;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public Boolean getAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(Boolean available) {
-        isAvailable = available;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public ServiceProvider getServiceProvider() {
-        return serviceProvider;
-    }
-
-    public void setServiceProvider(ServiceProvider serviceProvider) {
-        this.serviceProvider = serviceProvider;
-    }
 }

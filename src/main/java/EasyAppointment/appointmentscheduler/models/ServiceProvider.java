@@ -1,10 +1,8 @@
 package EasyAppointment.appointmentscheduler.models;
 
-import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Arrays;
 import java.util.Set;
 
 @Entity
