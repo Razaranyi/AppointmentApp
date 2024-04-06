@@ -1,5 +1,6 @@
 package EasyAppointment.appointmentscheduler.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,8 +60,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Database error: " + Objects.requireNonNull(ex.getRootCause()).getMessage());
+        String detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+
+        String errorMessage = "Database error: An unexpected error occurred.";
+
+        // Pattern matching for null constraint violation
+        Pattern pattern = Pattern.compile("null value in column \"([^\"]*)\"");
+        Matcher matcher = pattern.matcher(detailedMessage);
+
+        if (matcher.find()) {
+            String columnName = matcher.group(1); //find the string that matches the pattern
+            errorMessage = String.format("Invalid input: The '%s' cannot be null.", columnName);
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
     }
+
+
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
