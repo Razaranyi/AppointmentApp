@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class ServiceProviderDTO implements DTOInterface{
     private String name;
     private int[] workingDays;
     private String[] breakTime;
-    private Set<Appointment> appointments;
+    private Set<AppointmentDTO> appointmentsDTO;
     private Long branchId;
 
 
@@ -26,8 +27,12 @@ public class ServiceProviderDTO implements DTOInterface{
         this.id = serviceProvider.getId();
         this.name = serviceProvider.getName();
         this.workingDays = serviceProvider.getWorkingDays();
-        this.appointments = serviceProvider.getAppointments();
         this.breakTime = serviceProvider.getBreakTime().split("-");
         this.branchId = serviceProvider.getBranch().getId();
+        if (serviceProvider.getAppointments() != null) {
+            this.appointmentsDTO = serviceProvider.getAppointments().stream()
+                    .map(AppointmentDTO::new)
+                    .collect(Collectors.toSet());
+        }
     }
 }

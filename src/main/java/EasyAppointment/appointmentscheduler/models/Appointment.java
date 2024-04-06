@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class Appointment {
 
-    @Getter
     @Id
     @SequenceGenerator(
             name = "appointment_sequence",
@@ -26,6 +25,8 @@ public class Appointment {
             strategy = GenerationType.SEQUENCE,
             generator = "appointment_sequence"
     )
+
+    @Getter
     @Column(name = "appointment_id", updatable = false)
     private Long id;
 
@@ -41,6 +42,8 @@ public class Appointment {
     @Setter
     private LocalDateTime endTime;
 
+    @Getter
+    @Setter
     @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN")
     @NotNull(message = "Availability is required")
     private Boolean isAvailable;

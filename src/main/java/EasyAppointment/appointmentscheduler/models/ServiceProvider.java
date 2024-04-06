@@ -42,7 +42,7 @@ public class ServiceProvider {
 
     @Setter
     @Getter
-    @OneToMany(mappedBy = "serviceProvider")
+    @OneToMany(mappedBy = "serviceProvider", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Appointment> appointments;
 
     @Setter
@@ -50,6 +50,12 @@ public class ServiceProvider {
     @ManyToOne
     @JoinColumn(name = "branch_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Branch"))
     private Branch branch;
+
+    @Setter
+    @Getter
+    @OneToOne(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
+    private Booking booking;
+
 
 //    public ServiceProvider (ServiceProviderDTO serviceProviderDTO){
 //        this.name = serviceProviderDTO.getName();

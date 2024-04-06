@@ -1,5 +1,6 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
+import EasyAppointment.appointmentscheduler.models.Appointment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,11 @@ public class AppointmentDTO implements DTOInterface{
     private Long bookingId;
     private Long serviceProviderId;
 
+    public AppointmentDTO(Appointment appointment) {
+        this.id = appointment.getId();
+        this.startTime = appointment.getStartTime();
+        this.endTime = appointment.getEndTime();
+        this.isAvailable = appointment.getIsAvailable();
+        this.bookingId = (appointment.getBooking() != null) ? appointment.getBooking().getId() : null;
+    }
 }

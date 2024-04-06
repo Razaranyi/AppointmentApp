@@ -1,43 +1,53 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
+import EasyAppointment.appointmentscheduler.models.Appointment;
 import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
 import EasyAppointment.appointmentscheduler.models.User;
+import EasyAppointment.appointmentscheduler.repositories.AppointmentRepository;
 import EasyAppointment.appointmentscheduler.repositories.BranchRepository;
 import EasyAppointment.appointmentscheduler.repositories.ServiceProviderRepository;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.DayOfWeek;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ServiceProviderService {
     private final BranchRepository branchRepository;
     private final ServiceProviderRepository serviceProviderRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final AppointmentService appointmentService;
+    @Transactional
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId) {
-        List<ServiceProviderDTO> serviceProviderDTOs;
-        try{
-            if (branchRepository.findById(branchId).isEmpty()){ //check if branch exists
-                throw new NoSuchElementException("Branch not found");
-            }
-
-            //get service providers from branch and return it as a list of DTOs
-            Set<ServiceProvider> serviceProviders = branchRepository.findById(branchId).get().getServiceProviders();
-            serviceProviderDTOs = serviceProviders.stream()
-                    .map(ServiceProviderDTO::new)
-                    .toList();
-        }catch (Exception e){
-            throw new RuntimeException("Error in fetching service providers: " + e.getMessage());
+        Optional<Branch> branchOptional = branchRepository.findById(branchId);
+        if (branchOptional.isEmpty()) {
+            throw new NoSuchElementException("Branch not found");
         }
+
+        Set<ServiceProvider> serviceProviders = branchOptional.get().getServiceProviders();
+        List<ServiceProviderDTO> serviceProviderDTOs = serviceProviders.stream()
+                .map(ServiceProviderDTO::new)
+                .collect(Collectors.toList());
+
         return new ApiResponse<>(true, "Service Providers fetched successfully", serviceProviderDTOs);
     }
 
+
+    @Transactional
     public ApiResponse<ServiceProviderDTO> getServiceProvidersById(Long branchId, Long serviceProviderId) {
         ServiceProviderDTO serviceProviderDTO;
         try{
@@ -58,15 +68,14 @@ public class ServiceProviderService {
     public ApiResponse<ServiceProviderDTO> addServiceProvider(Long branchId, ApiRequest<ServiceProviderDTO> request,String userEmail) {
         ServiceProvider serviceProvider;
 
-        try{
-            if (branchRepository.findById(branchId).isEmpty()){
-                return new ApiResponse<>(false, "Branch not found", null);
-            }
+        if (branchRepository.findById(branchId).isEmpty()){
+            throw new NoSuchElementException("Branch not found");
+        }
 
-            if (!isUserAuthorized(branchId,userEmail)){
-                return new ApiResponse<>(false, "User not authorized", null);
-            }
-
+        if (isUserAuthorized(branchId, userEmail)){
+            throw new BadCredentialsException("User not authorized");
+        }
+        try {
             serviceProvider = ServiceProvider.builder()
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
@@ -75,15 +84,17 @@ public class ServiceProviderService {
                     .build();
 
             //add service provider to the branch
-            branchRepository.findById(branchId).get().getServiceProviders().add(serviceProvider);
-            branchRepository.save(branchRepository.findById(branchId).get());
+            serviceProvider = serviceProviderRepository.save(serviceProvider);
 
+            appointmentService.generateAndSaveServiceProviderSchedule(serviceProvider, serviceProvider.getBranch());
         }catch (Exception e){
-            return new ApiResponse<>(false, e.getMessage(), null);
+            throw new RuntimeException("Error in adding service provider: " + e.getMessage());
         }
+
         return new ApiResponse<>(true, "Service Provider added successfully", new ServiceProviderDTO(serviceProvider));
     }
 
+    @Transactional
     public ApiResponse<ServiceProvider> deleteServiceProvider(
             Long branchId, Long serviceProviderId, String userEmail) {
         ServiceProvider serviceProvider;
@@ -91,7 +102,7 @@ public class ServiceProviderService {
             if (branchRepository.findById(branchId).isEmpty()){
                 return new ApiResponse<>(false, "Branch not found", null);
             }
-            if (!isUserAuthorized(branchId,userEmail)){
+            if (isUserAuthorized(branchId, userEmail)){
                 return new ApiResponse<>(false, "User not authorized", null);
             }
             serviceProvider = serviceProviderRepository.findById(serviceProviderId).orElse(null);
@@ -107,10 +118,9 @@ public class ServiceProviderService {
     private boolean isUserAuthorized(Long branchId, String userEmail){
         Optional<Branch> optionalBranch = branchRepository.findById(branchId);
         if (optionalBranch.isEmpty()){
-            return false;
+            return true;
         }
         Set<User> users = optionalBranch.get().getBusiness().getUsers();
-        return users.stream().anyMatch(user -> user.getEmail().equals(userEmail));
+        return users.stream().noneMatch(user -> user.getEmail().equals(userEmail));
     }
-
 }

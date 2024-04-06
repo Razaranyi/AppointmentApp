@@ -30,6 +30,7 @@ public class BusinessService {
     private final BusinessRepository businessRepository;
 
 
+   @Transactional
     public ApiResponse<BusinessDTO> addBusiness(ApiRequest<BusinessDTO> request, String userEmail)
     throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
          User user = userRepository.findByEmail(userEmail)
@@ -51,6 +52,7 @@ public class BusinessService {
         return new ApiResponse<>(true, "Business created successfully", businessDTO);
     }
 
+   @Transactional
     public List<Business> getBusinessesByCategory(String categoryName) {
         return categoryRepository.findByName(categoryName)
                 .map(Category::getBusinesses)
@@ -59,6 +61,7 @@ public class BusinessService {
                 .orElse(Collections.emptyList());
     }
 
+    @Transactional
     public Map<Category, Set<Business>> getBusinessesFromRandomCategories(int numberOfCategories) {
         List<Category> categories = categoryRepository.findAll();
         Collections.shuffle(categories);
