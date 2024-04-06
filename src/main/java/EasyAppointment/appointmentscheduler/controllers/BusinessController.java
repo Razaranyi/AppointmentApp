@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +35,9 @@ public class BusinessController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<BusinessDTO>> createBusiness(@RequestBody ApiRequest<BusinessDTO> request, Authentication authentication){
-            String userEmail = authentication.getName(); // Gets the email from the current authentication principal
-            return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
+    public ResponseEntity<ApiResponse<BusinessDTO>> createBusiness(@RequestBody ApiRequest<BusinessDTO> request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
     }
 }

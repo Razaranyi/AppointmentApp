@@ -1,12 +1,10 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
-import EasyAppointment.appointmentscheduler.models.Appointment;
-import EasyAppointment.appointmentscheduler.models.Branch;
-import EasyAppointment.appointmentscheduler.models.ServiceProvider;
-import EasyAppointment.appointmentscheduler.models.User;
+import EasyAppointment.appointmentscheduler.models.*;
 import EasyAppointment.appointmentscheduler.repositories.AppointmentRepository;
 import EasyAppointment.appointmentscheduler.repositories.BranchRepository;
+import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
 import EasyAppointment.appointmentscheduler.repositories.ServiceProviderRepository;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
@@ -30,12 +28,16 @@ public class ServiceProviderService {
     private final BranchRepository branchRepository;
     private final ServiceProviderRepository serviceProviderRepository;
     private final AppointmentRepository appointmentRepository;
+    private final BusinessRepository businessRepository;
     private final AppointmentService appointmentService;
-    @Transactional
-    public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId) {
+
+    public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId,Long businessId) {
         Optional<Branch> branchOptional = branchRepository.findById(branchId);
         if (branchOptional.isEmpty()) {
             throw new NoSuchElementException("Branch not found");
+        }
+        if (!isBranchBelongsToBusiness(branchOptional.get(), businessRepository.getReferenceById(businessId))) {
+            throw new IllegalArgumentException("Wrong branch or business provided");
         }
 
         Set<ServiceProvider> serviceProviders = branchOptional.get().getServiceProviders();
@@ -47,20 +49,22 @@ public class ServiceProviderService {
     }
 
 
-    @Transactional
-    public ApiResponse<ServiceProviderDTO> getServiceProvidersById(Long branchId, Long serviceProviderId) {
-        ServiceProviderDTO serviceProviderDTO;
-        try{
-            if (branchRepository.findById(branchId).isEmpty()){
-                return new ApiResponse<>(false, "Branch not found", null);
-            }
-
-            ServiceProvider serviceProvider = serviceProviderRepository.findById(serviceProviderId).orElseThrow(()
-                    -> new NoSuchElementException("Service Provider not found"));
-            serviceProviderDTO = new ServiceProviderDTO(serviceProvider);
-        }catch (Exception e){
-            throw  new RuntimeException("Error in fetching service provider: " + e.getMessage());
+    public ApiResponse<ServiceProviderDTO> getServiceProvidersById(Long branchId, Long serviceProviderId, Long businessId) {
+        Optional<Branch> branchOptional = branchRepository.findById(branchId);
+        if (branchOptional.isEmpty()) {
+            throw new NoSuchElementException("Branch not found");
         }
+
+        Branch branch = branchOptional.get();
+        ServiceProvider serviceProvider = serviceProviderRepository.findById(serviceProviderId)
+                .orElseThrow(() -> new NoSuchElementException("Service Provider not found"));
+
+        // Check if the service provider belongs to the given branch
+        if (!isServiceProviderBelongsToBranch(branch, serviceProvider) || !isBranchBelongsToBusiness(branch, businessRepository.getReferenceById(businessId))) {
+            throw new IllegalArgumentException("Wrong branch or business provided");
+        }
+
+        ServiceProviderDTO serviceProviderDTO = new ServiceProviderDTO(serviceProvider);
         return new ApiResponse<>(true, "Service Provider fetched successfully", serviceProviderDTO);
     }
 
@@ -122,5 +126,11 @@ public class ServiceProviderService {
         }
         Set<User> users = optionalBranch.get().getBusiness().getUsers();
         return users.stream().noneMatch(user -> user.getEmail().equals(userEmail));
+    }
+    private boolean isServiceProviderBelongsToBranch(Branch branch, ServiceProvider serviceProvider){
+        return branch.getServiceProviders().contains(serviceProvider);
+    }
+    private boolean isBranchBelongsToBusiness(Branch branch, Business business){
+        return branch.getBusiness().equals(business);
     }
 }

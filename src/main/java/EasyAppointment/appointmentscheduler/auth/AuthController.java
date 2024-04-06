@@ -23,7 +23,7 @@ public class AuthController {
     private final AuthenticationService authService;
     @PostMapping("/sign-up")
     public ResponseEntity<AuthenticationResponse> registerUser(
-            @Valid @RequestBody RegisterRequest request, BindingResult result){
+            @Valid @RequestBody RegisterRequest request, BindingResult result) throws UserAlreadyExistException {
         if (result.hasErrors()) {
             String errorMessages = result.getAllErrors() // Collect all validation errors
                     .stream()
@@ -35,15 +35,8 @@ public class AuthController {
                             .build()
             );
         }
-        try {
-            return ResponseEntity.ok(authService.registerUser(request));
-        } catch (UserAlreadyExistException e) {
-            return ResponseEntity.badRequest().body(
-                    AuthenticationResponse.builder()
-                            .message(e.getMessage())
-                            .build()
-            );
-        }
+        return ResponseEntity.ok(authService.registerUser(request));
+
     }
 
     @PostMapping("/authenticate")
