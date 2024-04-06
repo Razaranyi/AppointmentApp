@@ -9,16 +9,11 @@ import EasyAppointment.appointmentscheduler.repositories.ServiceProviderReposito
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +31,7 @@ public class ServiceProviderService {
         if (branchOptional.isEmpty()) {
             throw new NoSuchElementException("Branch not found");
         }
-        if (!isBranchBelongsToBusiness(branchOptional.get(), businessRepository.getReferenceById(businessId))) {
+        if (isBranchBelongsToBusiness(branchOptional.get(), businessRepository.getReferenceById(businessId))) {
             throw new IllegalArgumentException("Wrong branch or business provided");
         }
 
@@ -60,7 +55,7 @@ public class ServiceProviderService {
                 .orElseThrow(() -> new NoSuchElementException("Service Provider not found"));
 
         // Check if the service provider belongs to the given branch
-        if (!isServiceProviderBelongsToBranch(branch, serviceProvider) || !isBranchBelongsToBusiness(branch, businessRepository.getReferenceById(businessId))) {
+        if (!isServiceProviderBelongsToBranch(branch, serviceProvider) || isBranchBelongsToBusiness(branch, businessRepository.getReferenceById(businessId))) {
             throw new IllegalArgumentException("Wrong branch or business provided");
         }
 
@@ -131,6 +126,6 @@ public class ServiceProviderService {
         return branch.getServiceProviders().contains(serviceProvider);
     }
     private boolean isBranchBelongsToBusiness(Branch branch, Business business){
-        return branch.getBusiness().equals(business);
+        return !branch.getBusiness().equals(business);
     }
 }
