@@ -6,9 +6,7 @@ import EasyAppointment.appointmentscheduler.models.Appointment;
 import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
 import EasyAppointment.appointmentscheduler.repositories.AppointmentRepository;
-import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +16,22 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
 
-    public List<Appointment> getAppointmentsByServiceProviderIdForWeek(Long serviceProviderId, int weekOffset) {
+    public List<AppointmentDTO> getAppointmentsByServiceProviderIdForWeek(Long serviceProviderId, int weekOffset) {
         LocalDate startOfWeek = LocalDate.now().plusWeeks(weekOffset).with(DayOfWeek.SUNDAY);
         LocalDate endOfWeek = startOfWeek.plusDays(6);
         return appointmentRepository.findByServiceProviderIdAndStartTimeBetween(serviceProviderId,
-                startOfWeek.atStartOfDay(),
-                endOfWeek.atTime(LocalTime.MAX));
+                        startOfWeek.atStartOfDay(),
+                        endOfWeek.atTime(LocalTime.MAX))
+                .stream()
+                .map(AppointmentDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
