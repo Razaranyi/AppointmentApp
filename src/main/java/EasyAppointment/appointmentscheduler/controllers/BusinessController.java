@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,28 +24,20 @@ public class BusinessController {
     private final BusinessService businessService;
 
     @GetMapping("/my-business")// fix this method to return all relevant business data
-    public ResponseEntity<?> getMyBusiness(Authentication authentication) {
+    public ResponseEntity<BusinessDTO> getMyBusiness(Authentication authentication) {
         String authenticatedUserEmail = authentication.getName(); // Gets the email from the current authentication principal
         Optional<Business> businessOptional = businessService.getBusinessByEmail(authenticatedUserEmail);
 
         return businessOptional
-                .map(ResponseEntity::ok)
+                .map(business -> ResponseEntity.ok(new BusinessDTO(business)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<BusinessDTO>> createBusiness(@RequestBody ApiRequest<BusinessDTO> request, Authentication authentication){
-        try{
-            String userEmail = authentication.getName(); // Gets the email from the current authentication principal
-            return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
-        } catch (UserAlreadyOwnsBusinessException | UsernameNotFoundException e ) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<BusinessDTO>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
+    public ResponseEntity<ApiResponse<BusinessDTO>> createBusiness(@RequestBody ApiRequest<BusinessDTO> request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
     }
 }

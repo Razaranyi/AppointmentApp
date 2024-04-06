@@ -25,17 +25,8 @@ public class ServiceProviderController {
     public ResponseEntity<ApiResponse<List<ServiceProviderDTO>>> getBranchesByAuthenticatedBusinessOwner(
             @PathVariable Long businessId,
             @PathVariable Long branchId) {
-        try {
-            return ResponseEntity.ok(serviceProviderService.getServiceProviderListByBranch(branchId));
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<List<EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO>>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
+            return ResponseEntity.ok(serviceProviderService.getServiceProviderListByBranch(branchId,businessId));
     }
 
     @GetMapping("/{serviceProviderId}/get")
@@ -44,16 +35,8 @@ public class ServiceProviderController {
             @PathVariable Long branchId,
             @PathVariable Long businessId,
             @PathVariable Long serviceProviderId) {
-        try {
-            return ResponseEntity.ok(serviceProviderService.getServiceProvidersById(branchId, serviceProviderId));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<ServiceProviderDTO>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
+
+            return ResponseEntity.ok(serviceProviderService.getServiceProvidersById(branchId, serviceProviderId,businessId));
     }
 
     @PostMapping("/create")

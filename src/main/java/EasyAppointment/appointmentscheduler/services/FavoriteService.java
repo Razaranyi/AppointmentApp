@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.FavoriteDTO;
+import EasyAppointment.appointmentscheduler.exception.FavoriteAlreadyExistsException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Favorite;
 import EasyAppointment.appointmentscheduler.models.User;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -53,19 +55,15 @@ public class FavoriteService {
         return new ApiResponse<>(true, "Favorites fetched successfully", favoriteDTOs);
     }
 
-    private FavoriteDTO convertToDTO(Favorite favorite) {
-        return new FavoriteDTO(favorite.getId(), favorite.getUser().getId(), favorite.getBusiness().getId());
-    }
-
 
     public ApiResponse<FavoriteDTO> addFavorite(ApiRequest<FavoriteDTO> request, String userEmail) throws RuntimeException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
         Business business = businessRepository.findById(request.getData().getBusinessId())
-                .orElseThrow(() -> new RuntimeException("Business not found with id: " + request.getData().getBusinessId())
+                .orElseThrow(() -> new NoSuchElementException("Business not found with id: " + request.getData().getBusinessId())
 );
         if (favoriteRepository.existsByUserEmailAndBusinessId(userEmail, request.getData().getBusinessId())) {
-            throw new RuntimeException("Favorite already exists");
+            throw new FavoriteAlreadyExistsException("Favorite already exists for this user and business.");
         }
 
         Favorite newFavorite = Favorite.builder()
@@ -77,6 +75,9 @@ public class FavoriteService {
         userRepository.save(user);
         FavoriteDTO favoriteDTO = new FavoriteDTO(savedFavorite.getId(), savedFavorite.getUser().getId(), savedFavorite.getBusiness().getId());
         return new ApiResponse<>(true, "Favorite added", favoriteDTO);
+    }
+    private FavoriteDTO convertToDTO(Favorite favorite) {
+        return new FavoriteDTO(favorite.getId(), favorite.getUser().getId(), favorite.getBusiness().getId());
     }
 
 }

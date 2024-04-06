@@ -14,10 +14,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class BranchService {
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
     private final BranchRepository branchRepository;
+    @Transactional
     public ApiResponse<BranchDTO> addBranch(ApiRequest<BranchDTO> request, String userEmail) throws RuntimeException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -34,6 +35,8 @@ public class BranchService {
                 .name(request.getData().getName())
                 .address(request.getData().getAddress())
                 .business(business)
+                .openingHours(request.getData().getOpeningHours())
+                .closingHours(request.getData().getClosingHours())
                 .serviceProviders(request.getData().getServiceProviders())
                 .build();
         business.getBranches().add(newBranch);
@@ -44,8 +47,9 @@ public class BranchService {
         return new ApiResponse<>(true, "branch created successfully", branchDTO);
     }
 
+    @Transactional
     public ApiResponse<List<BranchDTO>> getBranchesByAuthenticatedBusinessOwner() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //looks like best practice to authenticate user
         String authenticatedUserEmail = authentication.getName();
         User user = userRepository.findByEmail(authenticatedUserEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));

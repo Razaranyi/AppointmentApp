@@ -4,6 +4,8 @@ import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Entity
@@ -35,6 +37,16 @@ public class  Branch {
 
     @Getter
     @Setter
+    @Column(name = "ClosingHours", nullable = false)
+    private LocalTime closingHours;
+
+    @Getter
+    @Setter
+    @Column(name = "OpeningHours", nullable = false)
+    private LocalTime openingHours;
+
+    @Getter
+    @Setter
     @ManyToOne
     @JoinColumn(name = "business_id", foreignKey = @ForeignKey(name = "FK_Business_Branch"))
     private Business business;
@@ -43,12 +55,8 @@ public class  Branch {
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ServiceProvider> serviceProviders;
 
-    public Branch(String name, String address, Business business, Set<ServiceProvider> serviceProviders) {
-        this.name = name;
-        this.address = address;
-        this.business = business;
-        this.serviceProviders = serviceProviders;
-    }
+
+
 
 
 }

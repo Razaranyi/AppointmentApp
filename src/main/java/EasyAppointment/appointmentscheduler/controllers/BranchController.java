@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,19 +38,12 @@ public class BranchController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BranchDTO>> createBranch(
             @RequestBody ApiRequest<BranchDTO> request,
-            Authentication authentication,
             @PathVariable String businessId) {
-        try {
-            String userEmail = authentication.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
             return ResponseEntity.ok(branchService.addBranch(request, userEmail)); //change to businessId instead of userEmail and authenticate with helper
-        }catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<BranchDTO>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
+
     }
 
 

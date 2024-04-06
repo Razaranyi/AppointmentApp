@@ -38,17 +38,9 @@ public class FavoriteController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<FavoriteDTO>> addFavorite( // add business to the favorites
             @RequestBody ApiRequest<FavoriteDTO> request, Authentication authentication){
-        try {
+
           String userEmail = authentication.getName();
             return ResponseEntity.ok(favoriteService.addFavorite(request, userEmail));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<FavoriteDTO>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
     }
 
 
