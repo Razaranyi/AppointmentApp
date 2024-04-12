@@ -42,17 +42,17 @@ public class Appointment {
     @Setter
     private LocalDateTime endTime;
 
-    @Getter
     @Setter
+    @Getter
     @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN")
     @NotNull(message = "Availability is required")
-    private Boolean isAvailable;
+    public boolean isAvailable;
 
     @Getter
     @Setter
     @Column(name = "duration", nullable = false, columnDefinition = "INTEGER")
     @Positive(message = "Duration must be positive")
-    private Integer duration; // in minutes
+    private int duration; // in minutes
 
     @Getter
     @Setter
@@ -65,6 +65,13 @@ public class Appointment {
     @ManyToOne // Many appointments can be associated with one service provider
     @JoinColumn(name = "service_provider_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Appointment"))
     private ServiceProvider serviceProvider;
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
 
 
 }
