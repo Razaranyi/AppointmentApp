@@ -1,6 +1,6 @@
 package EasyAppointment.appointmentscheduler;
 
-import EasyAppointment.appointmentscheduler.controllers.CategoryService;
+import EasyAppointment.appointmentscheduler.services.CategoryService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

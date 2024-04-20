@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.controllers;
+package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.CategoryDto;
 import EasyAppointment.appointmentscheduler.models.Category;

@@ -2,6 +2,7 @@ package EasyAppointment.appointmentscheduler.controllers;
 
 import EasyAppointment.appointmentscheduler.DTO.CategoryDto;
 import EasyAppointment.appointmentscheduler.repositories.CategoryRepository;
+import EasyAppointment.appointmentscheduler.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

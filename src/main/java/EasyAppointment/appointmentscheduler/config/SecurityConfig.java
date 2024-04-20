@@ -41,8 +41,8 @@ public class SecurityConfig {
                          requests.requestMatchers(WHITE_LIST_URL)
                         .permitAll()
                         .requestMatchers("/api/businesses/my-business/**").hasRole(ADMIN.name())
+                        .requestMatchers("/api/businesses/create").hasAnyRole(ADMIN.name(), USER.name())
                         .requestMatchers("/api/categories/all").hasAnyRole(ADMIN.name(), USER.name())
-                        .requestMatchers(POST,"/api/businesses/create/**").hasAnyRole(USER.name(), ADMIN.name())
                         .requestMatchers("/api/user/**").hasAnyRole(ADMIN.name(), USER.name())
                         .requestMatchers("/api/home/**").hasAnyRole(ADMIN.name(), USER.name())
                         .anyRequest().
