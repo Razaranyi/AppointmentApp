@@ -23,6 +23,8 @@ public class AppointmentSchedulerBackendApplication {
     public CategoryInitializer categoryInitializer(CategoryService categoryService) {
         return new CategoryInitializer(categoryService);
     }
+
+
 }
 
 
@@ -38,6 +40,7 @@ class CategoryInitializer implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		List<String> categories = Arrays.asList(
+				"Other",            // None of the below
 				"Medical",          // General medical services
 				"Pet",              // Pet care services
 				"Wellness",           // Health and wellness services
@@ -64,6 +67,7 @@ class CategoryInitializer implements CommandLineRunner {
 				"Gardening",      	// Gardening and landscaping services
 				"Locksmith",        // Emergency locksmith services
 				"Veterinary"       // Veterinary clinics for pets
+
 		);
 		categoryService.initialCategories(categories);
 	}
