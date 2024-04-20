@@ -17,91 +17,83 @@ import java.util.regex.Pattern;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
+        return new ResponseEntity<>(body, status);
+    }
 
     @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<String> handleUserAlreadyExists(UserAlreadyExistException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    public ResponseEntity<Object> handleUserAlreadyExists(UserAlreadyExistException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", exception.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoClassDefFoundError.class)
-    public ResponseEntity<String> handleNoClassDefFoundError(NoClassDefFoundError ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> handleNoClassDefFoundError(NoClassDefFoundError ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserAlreadyOwnsBusinessException.class)
-    public ResponseEntity<String> handleUserAlreadyOwnsBusiness(UserAlreadyOwnsBusinessException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleUserAlreadyOwnsBusiness(UserAlreadyOwnsBusinessException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
-
-        String errorMessage = "Database error: An unexpected error occurred.";
-
-        // Pattern matching for null constraint violation
         Pattern pattern = Pattern.compile("null value in column \"([^\"]*)\"");
         Matcher matcher = pattern.matcher(detailedMessage);
 
+        String errorMessage = "Database error: An unexpected error occurred.";
         if (matcher.find()) {
-            String columnName = matcher.group(1); //find the string that matches the pattern
+            String columnName = matcher.group(1);
             errorMessage = String.format("Invalid input: The '%s' cannot be null.", columnName);
         }
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+        return buildErrorResponse(errorMessage, HttpStatus.CONFLICT);
     }
 
-
-
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found: " + ex.getMessage());
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex) {
+        return buildErrorResponse("Resource not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request: " + ex.getMessage());
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return buildErrorResponse("Bad request: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(FavoriteAlreadyExistsException.class)
     public ResponseEntity<Object> handleFavoriteAlreadyExistsException(FavoriteAlreadyExistsException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT);
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AppointmentAlreadyBookedException.class)
     public ResponseEntity<Object> handleAppointmentAlreadyBooked(AppointmentAlreadyBookedException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT);
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
 }
