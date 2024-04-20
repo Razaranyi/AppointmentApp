@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler(DataIntegrityViolationException.class) //database error readable message
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
         Pattern pattern = Pattern.compile("null value in column \"([^\"]*)\"");
@@ -95,6 +95,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleAppointmentAlreadyBooked(AppointmentAlreadyBookedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
-
-
 }

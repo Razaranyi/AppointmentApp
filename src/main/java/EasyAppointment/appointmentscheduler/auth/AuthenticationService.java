@@ -49,9 +49,7 @@ public class AuthenticationService {
         }
 
         catch (Exception WrongCredentialsException){
-            return AuthenticationResponse.builder()
-                    .message("Invalid email or password")
-                    .build();
+           throw new UsernameNotFoundException("Invalid credentials");
         }
 
 
