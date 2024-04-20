@@ -2,16 +2,14 @@ package EasyAppointment.appointmentscheduler.models;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Entity
+@Builder
 @Table(name = "booking")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +26,7 @@ public class Booking {
     )
 
     @Column(name = "booking_id", updatable = false)
+    @Getter
     private Long bookingId;
 
     @Setter
@@ -39,11 +38,11 @@ public class Booking {
     private String status;
 
     @Setter
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Appointment> appointments;
 
     @Setter
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
 //    @MapsId("userId")
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_User_Booking"))
     private User user;
@@ -54,17 +53,17 @@ public class Booking {
     @JoinColumn(name = "service_provider_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Booking"))
     private ServiceProvider serviceProvider;
 
+//    public Set<Appointment> getAppointments() {
+//        return appointments;
+//    }
 
-
-    public Booking(LocalDateTime bookingTime, String status, Set<Appointment> appointments, User user) {
-        this.bookingTime = bookingTime;
-        this.status = status;
-        this.appointments = appointments;
-        this.user = user;
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
+        appointment.setBooking(this);
     }
 
-
-    public Long getId() {
-        return bookingId;
+    public void removeAppointment(Appointment appointment) {
+        appointments.remove(appointment);
+        appointment.setBooking(null);
     }
 }

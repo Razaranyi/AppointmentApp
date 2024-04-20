@@ -21,16 +21,7 @@ public class FavoriteController {
 
     @GetMapping("/my-favorites") // get list of up to 7 personal favorites for the authenticated user
     public ResponseEntity<ApiResponse<List<FavoriteDTO>>> getMyFavorites() {
-        try {
             return ResponseEntity.ok(favoriteService.getFavoritesForAuthenticatedUser());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<List<FavoriteDTO>>builder()
-                            .success(false)
-                            .message(e.getMessage())
-                            .data(null)
-                            .build());
-        }
     }
 
 
