@@ -95,7 +95,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleAppointmentAlreadyBooked(AppointmentAlreadyBookedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
-
-
-
 }
