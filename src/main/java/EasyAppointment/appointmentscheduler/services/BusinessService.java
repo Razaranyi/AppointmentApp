@@ -79,4 +79,20 @@ public class BusinessService {
         return userRepository.findByEmail(email)
         .map(User::getBusiness);
     }
+
+    public Business findById(Long id) {
+        return businessRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Business with id " + id + " not found"));
+    }
+
+    public void save(Business business) {
+        businessRepository.save(business);
+    }
+
+    public ApiResponse<BusinessDTO> addLogoToBusiness(Long id, byte[] logoImage) {
+        Business business = findById(id);
+        business.setLogoImage(logoImage);
+        save(business);
+        return new ApiResponse<>(true, "Logo added successfully", new BusinessDTO(business));
+    }
 }

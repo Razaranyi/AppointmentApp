@@ -41,6 +41,10 @@ public class Category {
         this.businesses = businesses;
     }
 
+    public Category(String category) {
+        this.name = category;
+    }
+
     public Set<Business> getBusinesses() {
         return businesses != null ? businesses : Collections.emptySet();
     }
