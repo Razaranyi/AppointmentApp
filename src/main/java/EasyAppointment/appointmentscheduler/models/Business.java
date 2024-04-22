@@ -40,6 +40,11 @@ public class Business {
     @OneToMany(mappedBy = "business",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Favorite> favorites = new HashSet<>();
 
+    @Lob
+    @Getter
+    @Setter
+    private byte[] logoImage;
+
     @ManyToMany
     @JoinTable(
             name = "business_category",

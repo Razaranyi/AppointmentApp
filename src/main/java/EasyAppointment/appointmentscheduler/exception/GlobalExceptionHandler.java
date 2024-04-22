@@ -1,5 +1,6 @@
 package EasyAppointment.appointmentscheduler.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,5 +95,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppointmentAlreadyBookedException.class)
     public ResponseEntity<Object> handleAppointmentAlreadyBooked(AppointmentAlreadyBookedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex) {
+        return buildErrorResponse("Token has expired, please log-in", HttpStatus.UNAUTHORIZED);
     }
 }

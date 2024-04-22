@@ -3,17 +3,15 @@ package EasyAppointment.appointmentscheduler.auth;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationResponse;
+import EasyAppointment.appointmentscheduler.util.ControllerUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -25,10 +23,7 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> registerUser(
             @Valid @RequestBody RegisterRequest request, BindingResult result) throws UserAlreadyExistException {
         if (result.hasErrors()) {
-            String errorMessages = result.getAllErrors() // Collect all validation errors
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage) // Extract default messages
-                    .collect(Collectors.joining(", ")); // Join them with comma separation
+            String errorMessages = ControllerUtils.getErrorMessages(result);
             return ResponseEntity.badRequest().body(
                     AuthenticationResponse.builder()
                             .message(errorMessages)
