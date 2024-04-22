@@ -45,11 +45,15 @@ public class BusinessService {
                         .orElseGet(() -> categoryRepository.save(new Category(name))))
                 .collect(Collectors.toSet());
 
+
+
         Business newBusiness = Business.builder()
                 .name(request.getData().getName())
                 .businessCategories(categories)
                 .users(new HashSet<>(Collections.singletonList(user))) // Associate the user with the new business
+                .logoImage(request.getData().getLogoImage())
                 .build();
+
         Business savedBusiness = businessRepository.save(newBusiness);
         userService.updateUserRole(userEmail, Role.ADMIN);
         user.setBusiness(newBusiness);

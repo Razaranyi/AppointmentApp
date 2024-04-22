@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,5 +38,15 @@ public class BusinessDTO implements DTOInterface {
         this.id = id;
         this.name = name;
         this.businessCategories = businessCategories.stream().map(Category::getName).collect(Collectors.toSet());
+    }
+
+    @Override
+    public String toString() {
+        return "BusinessDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", businessCategories=" + businessCategories +
+                ", logoImage=" + Arrays.toString(logoImage) +
+                '}';
     }
 }
