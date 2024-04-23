@@ -12,6 +12,7 @@ import java.util.Set;
 @Data
 @Getter
 @Setter
+@ToString
 public class BranchDTO implements DTOInterface{
     private Long BranchId;
     private String name;
@@ -19,6 +20,7 @@ public class BranchDTO implements DTOInterface{
     private LocalTime closingHours;
     private LocalTime openingHours;
     private Long businessId;
+    private byte[] branchImage;
     private Set<ServiceProvider> serviceProviders; //consider to take only ids/names
 
 

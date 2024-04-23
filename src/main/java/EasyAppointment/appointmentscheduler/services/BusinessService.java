@@ -11,6 +11,8 @@ import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
 import EasyAppointment.appointmentscheduler.repositories.CategoryRepository;
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,5 +107,25 @@ public class BusinessService {
         business.setLogoImage(logoImage);
         save(business);
         return new ApiResponse<>(true, "Logo added successfully", new BusinessDTO(business));
+    }
+
+
+   @Transactional(readOnly = true)
+    public ApiResponse<BusinessDTO> getBusinessId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserEmail = authentication.getName();
+
+        User user = userRepository.findByEmail(authenticatedUserEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));
+
+        Optional<Business> business = businessRepository.findByUsersContains(user);
+
+        System.out.println(business.get().getId());
+
+
+
+        return business
+                .map(business1 -> new ApiResponse<>(true, "Business found", new BusinessDTO(business1)))
+                .orElseGet(() -> new ApiResponse<>(false, "Business not found", null));
     }
 }
