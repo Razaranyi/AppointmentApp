@@ -45,6 +45,13 @@ public class  Branch {
     @Column(name = "OpeningHours", nullable = false)
     private LocalTime openingHours;
 
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Getter
+    @Setter
+    @Column(name = "branch_image", nullable = true)
+    private byte[] branchImage;
+
     @Getter
     @Setter
     @ManyToOne
@@ -54,9 +61,5 @@ public class  Branch {
     @Getter
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ServiceProvider> serviceProviders;
-
-
-
-
 
 }

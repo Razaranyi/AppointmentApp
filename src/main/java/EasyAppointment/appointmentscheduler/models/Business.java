@@ -10,6 +10,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Business {
     @Id
     @SequenceGenerator(
@@ -41,6 +42,7 @@ public class Business {
     private Set<Favorite> favorites = new HashSet<>();
 
     @Lob
+    @Basic(fetch = FetchType.LAZY) // Lazy load large data
     @Getter
     @Setter
     private byte[] logoImage;

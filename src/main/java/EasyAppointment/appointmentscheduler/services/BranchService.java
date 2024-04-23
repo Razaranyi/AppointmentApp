@@ -25,7 +25,7 @@ public class BranchService {
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
     private final BranchRepository branchRepository;
-    @Transactional
+    @Transactional(readOnly = false)
     public ApiResponse<BranchDTO> addBranch(ApiRequest<BranchDTO> request, String userEmail) throws RuntimeException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -37,6 +37,7 @@ public class BranchService {
                 .business(business)
                 .openingHours(request.getData().getOpeningHours())
                 .closingHours(request.getData().getClosingHours())
+                .branchImage(request.getData().getBranchImage())
                 .serviceProviders(request.getData().getServiceProviders())
                 .build();
         business.getBranches().add(newBranch);
@@ -47,7 +48,7 @@ public class BranchService {
         return new ApiResponse<>(true, "branch created successfully", branchDTO);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ApiResponse<List<BranchDTO>> getBranchesByAuthenticatedBusinessOwner() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //looks like best practice to authenticate user
         String authenticatedUserEmail = authentication.getName();
