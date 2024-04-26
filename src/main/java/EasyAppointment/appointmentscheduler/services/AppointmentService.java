@@ -37,7 +37,7 @@ public class AppointmentService {
     @Transactional
     public void generateAndSaveServiceProviderSchedule(ServiceProvider serviceProvider, Branch branch) {
         List<Appointment> appointments = new ArrayList<>();
-        List<LocalTime[]> breakTimes = parseBreakTimes(serviceProvider.getBreakTime());
+        List<LocalTime[]> breakTimes = parseBreakTimes(serviceProvider.getBreakHour());
         LocalDate today = LocalDate.now();
         LocalDate schedulingHorizon = today.plusMonths(3);  // Adjust the horizon as needed
 

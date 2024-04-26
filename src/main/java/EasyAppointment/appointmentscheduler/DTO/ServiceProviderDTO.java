@@ -1,6 +1,5 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
-import EasyAppointment.appointmentscheduler.models.Appointment;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,18 +20,23 @@ public class ServiceProviderDTO implements DTOInterface{
     private String[] breakTime;
     private Set<AppointmentDTO> appointmentsDTO;
     private Long branchId;
+    private byte[] serviceProviderImage;
+
 
 
     public ServiceProviderDTO(ServiceProvider serviceProvider){
         this.id = serviceProvider.getId();
         this.name = serviceProvider.getName();
         this.workingDays = serviceProvider.getWorkingDays();
-        this.breakTime = serviceProvider.getBreakTime().split("-");
+        this.breakTime = serviceProvider.getBreakHour().split("-");
         this.branchId = serviceProvider.getBranch().getId();
         if (serviceProvider.getAppointments() != null) {
             this.appointmentsDTO = serviceProvider.getAppointments().stream()
                     .map(AppointmentDTO::new)
                     .collect(Collectors.toSet());
+        }
+        if (serviceProvider.getServiceProviderImage() != null) {
+            this.serviceProviderImage = serviceProvider.getServiceProviderImage();
         }
     }
 }

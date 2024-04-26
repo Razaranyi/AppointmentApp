@@ -32,6 +32,8 @@ public class BranchDTO implements DTOInterface{
         this.serviceProviders = branch.getServiceProviders();
         this.closingHours = branch.getClosingHours();
         this.openingHours = branch.getOpeningHours();
+        if (branch.getBranchImage() != null) {
+            this.branchImage = branch.getBranchImage();
+        }
     }
-
 }

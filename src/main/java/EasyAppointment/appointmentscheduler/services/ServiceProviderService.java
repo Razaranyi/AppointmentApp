@@ -78,7 +78,7 @@ public class ServiceProviderService {
             serviceProvider = ServiceProvider.builder()
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
-                    .breakTime(Arrays.toString(request.getData().getBreakTime()))
+                    .breakHour(Arrays.toString(request.getData().getBreakTime()))
                     .branch(branchRepository.findById(branchId).get())
                     .build();
 

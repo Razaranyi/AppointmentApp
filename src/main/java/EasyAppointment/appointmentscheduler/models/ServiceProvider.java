@@ -38,7 +38,14 @@ public class ServiceProvider {
     @Setter
     @Getter
     @Column(name = "breakTime", nullable = false, columnDefinition = "TEXT")
-    private String breakTime;
+    private String breakHour;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Getter
+    @Setter
+    @Column(name = "service_provider_image", nullable = true)
+    private byte[] serviceProviderImage;
 
     @Setter
     @Getter

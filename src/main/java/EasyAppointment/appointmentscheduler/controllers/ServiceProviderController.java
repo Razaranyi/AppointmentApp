@@ -30,7 +30,6 @@ public class ServiceProviderController {
     }
 
     @GetMapping("/{serviceProviderId}/get")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<ServiceProviderDTO>> getServiceProviderById(
             @PathVariable Long branchId,
             @PathVariable Long businessId,

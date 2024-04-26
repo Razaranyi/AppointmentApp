@@ -12,6 +12,8 @@ target/
 .settings
 .springBeans
 .sts4-cache
+# add properties file
+src/main/resources/application.properties
 
 ### IntelliJ IDEA ###
 .idea
@@ -34,3 +36,4 @@ build/
 src/main/resources/EasyAppointment/appointmentscheduler/config/.env
 src/main/resources/application-secret.properties
 application-secret.properties
+src/main/resources/application.properties
