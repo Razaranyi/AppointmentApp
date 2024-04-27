@@ -66,6 +66,7 @@ public class ServiceProviderService {
     @Transactional
     public ApiResponse<ServiceProviderDTO> addServiceProvider(Long branchId, ApiRequest<ServiceProviderDTO> request,String userEmail) {
         ServiceProvider serviceProvider;
+        System.out.println("Request: " + request.getData().toString());
 
         if (branchRepository.findById(branchId).isEmpty()){
             throw new NoSuchElementException("Branch not found");
@@ -78,7 +79,7 @@ public class ServiceProviderService {
             serviceProvider = ServiceProvider.builder()
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
-                    .breakHour(Arrays.toString(request.getData().getBreakTime()))
+                    .breakHour(Arrays.toString(request.getData().getBreakHour()))
                     .branch(branchRepository.findById(branchId).get())
                     .build();
 

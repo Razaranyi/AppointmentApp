@@ -1,10 +1,10 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,11 +13,15 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ServiceProviderDTO implements DTOInterface{
     private Long id;
+    @NotBlank(message = "Name is required")
+    @Pattern(regexp = "^[\\u0590-\\u05FF\\uFB1D-\\uFB4F A-Za-z-\\s']+$", message = "Name must contain only valid characters")
     private String name;
-    private int[] workingDays;
-    private String[] breakTime;
+    @NotNull(message = "Working days are required")
+    private boolean[] workingDays;
+    private String[] breakHour;
     private Set<AppointmentDTO> appointmentsDTO;
     private Long branchId;
     private byte[] serviceProviderImage;
@@ -28,7 +32,7 @@ public class ServiceProviderDTO implements DTOInterface{
         this.id = serviceProvider.getId();
         this.name = serviceProvider.getName();
         this.workingDays = serviceProvider.getWorkingDays();
-        this.breakTime = serviceProvider.getBreakHour().split("-");
+        this.breakHour = serviceProvider.getBreakHour().split("-");
         this.branchId = serviceProvider.getBranch().getId();
         if (serviceProvider.getAppointments() != null) {
             this.appointmentsDTO = serviceProvider.getAppointments().stream()

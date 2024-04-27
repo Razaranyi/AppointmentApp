@@ -32,8 +32,8 @@ public class ServiceProvider {
 
     @Getter
     @Setter
-    @Column(name = "workingDays", nullable = false, columnDefinition = "int[]")
-    private int[] workingDays;
+    @Column(name = "workingDays", nullable = false, columnDefinition = "boolean[]")
+    private boolean[] workingDays;
 
     @Setter
     @Getter

@@ -41,38 +41,74 @@ public class AppointmentService {
         LocalDate today = LocalDate.now();
         LocalDate schedulingHorizon = today.plusMonths(3);  // Adjust the horizon as needed
 
-        int[] workingDaysIntegers = serviceProvider.getWorkingDays();
+        boolean[] workingDays = serviceProvider.getWorkingDays();
+        for (int i = 0; i < workingDays.length; i++) {
+            if (workingDays[i]) {
+                DayOfWeek dayOfWeek = DayOfWeek.of(i + 1);  // Convert integer to DayOfWeek
+                LocalDate nextDate = getNextWorkingDay(today, dayOfWeek);
 
-        for (Integer dayInt : workingDaysIntegers) {
-            DayOfWeek dayOfWeek = DayOfWeek.of(dayInt);  // Convert integer to DayOfWeek
-            LocalDate nextDate = getNextWorkingDay(today, dayOfWeek);
+                while (!nextDate.isAfter(schedulingHorizon)) {
+                    LocalDateTime start = LocalDateTime.of(nextDate, branch.getOpeningHours());
+                    LocalDateTime end = LocalDateTime.of(nextDate, branch.getClosingHours());
 
-            while (!nextDate.isAfter(schedulingHorizon)) {
-                LocalDateTime start = LocalDateTime.of(nextDate, branch.getOpeningHours());
-                LocalDateTime end = LocalDateTime.of(nextDate, branch.getClosingHours());
+                    while (start.isBefore(end)) {
+                        if (!isDuringBreak(start.toLocalTime(), breakTimes)) {
+                            Appointment appointment = Appointment.builder()
+                                    .serviceProvider(serviceProvider)
+                                    .startTime(start)
+                                    .endTime(start.plusMinutes(30))  // Assuming 30 minutes for now
+                                    .isAvailable(true)
+                                    .duration(30)  // Assuming 30 minutes for now
+                                    .build();
+                            appointments.add(appointment);
 
-                while (start.isBefore(end)) {
-                    if (!isDuringBreak(start.toLocalTime(), breakTimes)) {
-                        Appointment appointment = Appointment.builder()
-                                .serviceProvider(serviceProvider)
-                                .startTime(start)
-                                .endTime(start.plusMinutes(30))  // Assuming 30 minutes for now
-                                .isAvailable(true)
-                                .duration(30)  // Assuming 30 minutes for now
-                                .build();
-                        appointments.add(appointment);
-
-                        start = start.plusMinutes(30);  // Increment start time for the next appointment
-                    } else {
-                        LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
-                        start = LocalDateTime.of(nextDate, nextBreakEnd);
+                            start = start.plusMinutes(30);  // Increment start time for the next appointment
+                        } else {
+                            LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
+                            start = LocalDateTime.of(nextDate, nextBreakEnd);
+                        }
                     }
-                }
 
-                // Ensure we get the next working day relative to the just processed day
-                nextDate = getNextWorkingDay(nextDate.plusDays(1), dayOfWeek);
+                    // Ensure we get the next working day relative to the just processed day
+                    nextDate = getNextWorkingDay(nextDate.plusDays(1), dayOfWeek);
+                }
             }
         }
+
+
+//        int[] workingDaysIntegers = serviceProvider.getWorkingDays();
+//
+//        for (Integer dayInt : workingDaysIntegers) {
+//            DayOfWeek dayOfWeek = DayOfWeek.of(dayInt);  // Convert integer to DayOfWeek
+//            LocalDate nextDate = getNextWorkingDay(today, dayOfWeek);
+//
+//            while (!nextDate.isAfter(schedulingHorizon)) {
+//                LocalDateTime start = LocalDateTime.of(nextDate, branch.getOpeningHours());
+//                LocalDateTime end = LocalDateTime.of(nextDate, branch.getClosingHours());
+//
+//                while (start.isBefore(end)) {
+//                    if (!isDuringBreak(start.toLocalTime(), breakTimes)) {
+//                        Appointment appointment = Appointment.builder()
+//                                .serviceProvider(serviceProvider)
+//                                .startTime(start)
+//                                .endTime(start.plusMinutes(30))  // Assuming 30 minutes for now
+//                                .isAvailable(true)
+//                                .duration(30)  // Assuming 30 minutes for now
+//                                .build();
+//                        appointments.add(appointment);
+//
+//                        start = start.plusMinutes(30);  // Increment start time for the next appointment
+//                    } else {
+//                        LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
+//                        start = LocalDateTime.of(nextDate, nextBreakEnd);
+//                    }
+//                }
+//
+//                    // Ensure we get the next working day relative to the just processed day
+//                    nextDate = getNextWorkingDay(nextDate.plusDays(1), dayOfWeek);
+//                }
+//            }
+//        }
 
         appointmentRepository.saveAll(appointments);
     }

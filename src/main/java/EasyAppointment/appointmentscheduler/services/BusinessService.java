@@ -120,7 +120,6 @@ public class BusinessService {
 
         Optional<Business> business = businessRepository.findByUsersContains(user);
 
-        System.out.println(business.get().getId());
 
 
 
