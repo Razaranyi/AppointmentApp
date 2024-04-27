@@ -1,8 +1,6 @@
 package EasyAppointment.appointmentscheduler.models;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
@@ -12,6 +10,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ServiceProvider {
     @Getter
     @Id
@@ -41,6 +40,11 @@ public class ServiceProvider {
     @Setter
     @Column(name = "breakTime", nullable = false, columnDefinition = "TEXT")
     private String breakHour;
+
+    @Getter
+    @Setter
+    @Column(name = "session_duration", nullable = false, columnDefinition = "INT")
+    private int sessionDuration;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)

@@ -23,6 +23,8 @@ public class ServiceProviderDTO implements DTOInterface{
     private boolean[] workingDays;
     @NotNull(message = "Break hour is required")
     private String[] breakHour;
+    @NotNull(message = "Session duration is required")
+    private int sessionDuration;
     private Set<AppointmentDTO> appointmentsDTO;
     private Long branchId;
     private byte[] serviceProviderImage;
@@ -37,6 +39,9 @@ public class ServiceProviderDTO implements DTOInterface{
             this.breakHour = serviceProvider.getBreakHour().split("-");
 
         }
+
+        this.sessionDuration = serviceProvider.getSessionDuration();
+
         this.branchId = serviceProvider.getBranch().getId();
         if (serviceProvider.getAppointments() != null) {
             this.appointmentsDTO = serviceProvider.getAppointments().stream()

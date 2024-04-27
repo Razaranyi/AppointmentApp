@@ -36,12 +36,14 @@ public class AppointmentService {
 
     @Transactional
     public void generateAndSaveServiceProviderSchedule(ServiceProvider serviceProvider, Branch branch) {
+        System.out.println("Generating appointments for " + serviceProvider.toString());
         List<Appointment> appointments = new ArrayList<>();
         List<LocalTime[]> breakTimes = parseBreakTimes(serviceProvider.getBreakHour());
         LocalDate today = LocalDate.now();
         LocalDate schedulingHorizon = today.plusMonths(3);  // Adjust the horizon as needed
 
         boolean[] workingDays = serviceProvider.getWorkingDays();
+        int sessionDuration = serviceProvider.getSessionDuration();
         for (int i = 0; i < workingDays.length; i++) {
             if (workingDays[i]) {
                 DayOfWeek dayOfWeek = DayOfWeek.of(i + 1);  // Convert integer to DayOfWeek
@@ -56,13 +58,13 @@ public class AppointmentService {
                             Appointment appointment = Appointment.builder()
                                     .serviceProvider(serviceProvider)
                                     .startTime(start)
-                                    .endTime(start.plusMinutes(30))  // Assuming 30 minutes for now
+                                    .endTime(start.plusMinutes(sessionDuration))
                                     .isAvailable(true)
-                                    .duration(30)  // Assuming 30 minutes for now
+                                    .duration(sessionDuration)
                                     .build();
                             appointments.add(appointment);
 
-                            start = start.plusMinutes(30);  // Increment start time for the next appointment
+                            start = start.plusMinutes(sessionDuration);
                         } else {
                             LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
                             start = LocalDateTime.of(nextDate, nextBreakEnd);
@@ -75,46 +77,15 @@ public class AppointmentService {
             }
         }
 
-
-//        int[] workingDaysIntegers = serviceProvider.getWorkingDays();
-//
-//        for (Integer dayInt : workingDaysIntegers) {
-//            DayOfWeek dayOfWeek = DayOfWeek.of(dayInt);  // Convert integer to DayOfWeek
-//            LocalDate nextDate = getNextWorkingDay(today, dayOfWeek);
-//
-//            while (!nextDate.isAfter(schedulingHorizon)) {
-//                LocalDateTime start = LocalDateTime.of(nextDate, branch.getOpeningHours());
-//                LocalDateTime end = LocalDateTime.of(nextDate, branch.getClosingHours());
-//
-//                while (start.isBefore(end)) {
-//                    if (!isDuringBreak(start.toLocalTime(), breakTimes)) {
-//                        Appointment appointment = Appointment.builder()
-//                                .serviceProvider(serviceProvider)
-//                                .startTime(start)
-//                                .endTime(start.plusMinutes(30))  // Assuming 30 minutes for now
-//                                .isAvailable(true)
-//                                .duration(30)  // Assuming 30 minutes for now
-//                                .build();
-//                        appointments.add(appointment);
-//
-//                        start = start.plusMinutes(30);  // Increment start time for the next appointment
-//                    } else {
-//                        LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
-//                        start = LocalDateTime.of(nextDate, nextBreakEnd);
-//                    }
-//                }
-//
-//                    // Ensure we get the next working day relative to the just processed day
-//                    nextDate = getNextWorkingDay(nextDate.plusDays(1), dayOfWeek);
-//                }
-//            }
-//        }
-
         appointmentRepository.saveAll(appointments);
     }
 
     private List<LocalTime[]> parseBreakTimes(String breakTimeString) {
         List<LocalTime[]> breakTimes = new ArrayList<>();
+
+        if (breakTimeString == null || breakTimeString.trim().isEmpty() || breakTimeString.equals("[]")) {
+            return breakTimes;
+        }
 
         String[] breakTimeArray = breakTimeString.replaceAll("[\\[\\]]", "").split(",");
         for (int i = 0; i < breakTimeArray.length; i += 2) {
