@@ -37,6 +37,7 @@ public class ServiceProviderController {
             @PathVariable Long branchId,
             @PathVariable Long businessId,
             @PathVariable Long serviceProviderId) {
+        System.out.println("get service provider by id request: " + branchId + " businessId: " + businessId + " serviceProviderId: " + serviceProviderId);
 
             return ResponseEntity.ok(serviceProviderService.getServiceProvidersById(branchId, serviceProviderId,businessId));
     }

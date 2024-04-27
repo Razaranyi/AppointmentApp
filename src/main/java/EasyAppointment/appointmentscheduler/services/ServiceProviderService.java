@@ -2,10 +2,7 @@ package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
 import EasyAppointment.appointmentscheduler.models.*;
-import EasyAppointment.appointmentscheduler.repositories.AppointmentRepository;
-import EasyAppointment.appointmentscheduler.repositories.BranchRepository;
-import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
-import EasyAppointment.appointmentscheduler.repositories.ServiceProviderRepository;
+import EasyAppointment.appointmentscheduler.repositories.*;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +22,10 @@ public class ServiceProviderService {
     private final AppointmentRepository appointmentRepository;
     private final BusinessRepository businessRepository;
     private final AppointmentService appointmentService;
+    private final UserRepository userRepository;
 
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId,Long businessId) {
+        System.out.println("get service provider list by branch request: " + branchId + " businessId: " + businessId);
         Optional<Branch> branchOptional = branchRepository.findById(branchId);
         if (branchOptional.isEmpty()) {
             throw new NoSuchElementException("Branch not found");
@@ -75,19 +74,24 @@ public class ServiceProviderService {
         if (isUserAuthorized(branchId, userEmail)){
             throw new BadCredentialsException("User not authorized");
         }
+
+        if (serviceProviderRepository.existsByNameAndBranchId(request.getData().getName(), branchId)){
+            throw new IllegalArgumentException("Service Provider already exists");
+        }
+
         try {
-            serviceProvider = ServiceProvider.builder()
+            ServiceProvider.ServiceProviderBuilder serviceProviderBuilder = ServiceProvider.builder()
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
-                    .breakHour(Arrays.toString(request.getData().getBreakHour()))
-                    .branch(branchRepository.findById(branchId).get())
-                    .build();
+                    .branch(branchRepository.findById(branchId).get());
 
-            //add service provider to the branch
-            serviceProvider = serviceProviderRepository.save(serviceProvider);
+            if (request.getData().getBreakHour() != null){
+                serviceProviderBuilder.breakHour(Arrays.toString(request.getData().getBreakHour()));
+            }
 
-            appointmentService.generateAndSaveServiceProviderSchedule(serviceProvider, serviceProvider.getBranch());
-        }catch (Exception e){
+            serviceProvider = serviceProviderBuilder.build();
+            branchRepository.findById(branchId).get().getServiceProviders().add(serviceProvider);
+        } catch (Exception e) {
             throw new RuntimeException("Error in adding service provider: " + e.getMessage());
         }
 

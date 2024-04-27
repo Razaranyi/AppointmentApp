@@ -3,6 +3,7 @@ package EasyAppointment.appointmentscheduler.services;
 import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
 import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.Business;
+import EasyAppointment.appointmentscheduler.models.ServiceProvider;
 import EasyAppointment.appointmentscheduler.models.User;
 import EasyAppointment.appointmentscheduler.repositories.BranchRepository;
 import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -33,10 +35,17 @@ public class BranchService {
 
     @Transactional(readOnly = false)
     public ApiResponse<BranchDTO> addBranch(ApiRequest<BranchDTO> request, String userEmail) throws RuntimeException {
+
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
         Business business = businessRepository.findByUsersContains(user)
                 .orElseThrow(() -> new RuntimeException("Business not found for user: " + userEmail));
+        Set<ServiceProvider> serviceProviders = new HashSet<>();
+
+        if (request.getData().getServiceProvidersIds() != null) {
+            serviceProviders = new HashSet<>(serviceProviderRepository.findAllById(request.getData().getServiceProvidersIds()));
+        }
+
         Branch newBranch = Branch.builder()
                 .name(request.getData().getName())
                 .address(request.getData().getAddress())
@@ -44,7 +53,7 @@ public class BranchService {
                 .openingHours(request.getData().getOpeningHours())
                 .closingHours(request.getData().getClosingHours())
                 .branchImage(request.getData().getBranchImage())
-                .serviceProviders(new HashSet<>(serviceProviderRepository.findAllById(request.getData().getServiceProvidersIds())))
+                .serviceProviders(serviceProviders)
                 .build();
         business.getBranches().add(newBranch);
         businessRepository.save(business); // save business with new branch, using cascade
