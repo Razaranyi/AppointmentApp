@@ -1,6 +1,8 @@
 package EasyAppointment.appointmentscheduler.models;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
@@ -32,13 +34,20 @@ public class ServiceProvider {
 
     @Getter
     @Setter
-    @Column(name = "workingDays", nullable = false, columnDefinition = "int[]")
-    private int[] workingDays;
+    @Column(name = "workingDays", nullable = false, columnDefinition = "boolean[]")
+    private boolean[] workingDays;
 
-    @Setter
     @Getter
+    @Setter
     @Column(name = "breakTime", nullable = false, columnDefinition = "TEXT")
-    private String breakTime;
+    private String breakHour;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Getter
+    @Setter
+    @Column(name = "service_provider_image", nullable = true)
+    private byte[] serviceProviderImage;
 
     @Setter
     @Getter
@@ -55,6 +64,7 @@ public class ServiceProvider {
     @Getter
     @OneToOne(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
     private Booking booking;
+
 
 
 //    public ServiceProvider (ServiceProviderDTO serviceProviderDTO){

@@ -24,8 +24,9 @@ public class BusinessController {
     private final BusinessService businessService;
 
     @GetMapping("/my-business")// fix this method to return all relevant business data
-    public ResponseEntity<BusinessDTO> getMyBusiness(Authentication authentication) {
-        String authenticatedUserEmail = authentication.getName(); // Gets the email from the current authentication principal
+    public ResponseEntity<BusinessDTO> getMyBusiness() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserEmail = authentication.getName();
         Optional<Business> businessOptional = businessService.getBusinessByEmail(authenticatedUserEmail);
 
         return businessOptional

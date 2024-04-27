@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/businesses/my-business/**").hasRole(ADMIN.name())
                         .requestMatchers("/api/businesses/create").hasAnyRole(ADMIN.name(), USER.name())
-                        .requestMatchers("/api/businesses/get-id").hasRole(ADMIN.name())
+                        .requestMatchers("/api/businesses/get-id").hasAnyRole(ADMIN.name(), USER.name())
                         .requestMatchers("/api/categories/all").hasAnyRole(ADMIN.name(), USER.name())
                         .requestMatchers("/api/user/**").hasAnyRole(ADMIN.name(), USER.name())
                         .requestMatchers("/api/home/**").hasAnyRole(ADMIN.name(), USER.name())
