@@ -83,13 +83,17 @@ public class ServiceProviderService {
             ServiceProvider.ServiceProviderBuilder serviceProviderBuilder = ServiceProvider.builder()
                     .name(request.getData().getName())
                     .workingDays(request.getData().getWorkingDays())
-                    .branch(branchRepository.findById(branchId).get());
+                    .branch(branchRepository.findById(branchId).get())
+                    .sessionDuration(request.getData().getSessionDuration());
+
 
             if (request.getData().getBreakHour() != null){
                 serviceProviderBuilder.breakHour(Arrays.toString(request.getData().getBreakHour()));
             }
 
             serviceProvider = serviceProviderBuilder.build();
+            serviceProvider = serviceProviderRepository.save(serviceProvider); // Save the serviceProvider object to the database
+            appointmentService.generateAndSaveServiceProviderSchedule(serviceProvider, branchRepository.findById(branchId).get());
             branchRepository.findById(branchId).get().getServiceProviders().add(serviceProvider);
         } catch (Exception e) {
             throw new RuntimeException("Error in adding service provider: " + e.getMessage());
