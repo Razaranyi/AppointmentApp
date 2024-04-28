@@ -36,9 +36,9 @@ public class BusinessService {
             throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
-        if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
-            throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
-        }
+//        if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
+//            throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
+//        }
 
         // Convert category names to category entities
         Set<String> categoryNames = request.getData().getBusinessCategories();

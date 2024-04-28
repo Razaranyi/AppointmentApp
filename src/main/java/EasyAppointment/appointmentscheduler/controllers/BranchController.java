@@ -4,11 +4,14 @@ import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import EasyAppointment.appointmentscheduler.services.BranchService;
+import EasyAppointment.appointmentscheduler.util.ControllerUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,9 +39,14 @@ public class BranchController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<BranchDTO>> createBranch(
+    public ResponseEntity<ApiResponse<BranchDTO>> createBranch(@Valid
             @RequestBody ApiRequest<BranchDTO> request,
-            @PathVariable String businessId) {
+            @PathVariable String businessId,
+            BindingResult result) {
+        if (result.hasErrors()) {
+            String errorMessages = ControllerUtils.getErrorMessages(result);
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, errorMessages, null));
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

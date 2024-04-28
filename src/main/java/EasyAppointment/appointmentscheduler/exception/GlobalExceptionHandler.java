@@ -21,11 +21,25 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new LinkedHashMap<>();
+        String refinedMessage = extractMessage(message);
+
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
-        body.put("message", message);
+        body.put("message", refinedMessage);
         return new ResponseEntity<>(body, status);
+    }
+
+    private String extractMessage(String message) {
+        if (message.contains("=")) {
+            int index = message.indexOf('=') + 1;
+            int endIndex = message.indexOf('}', index);
+            if (endIndex == -1) {
+                endIndex = message.length();
+            }
+            return message.substring(index, endIndex).trim();
+        }
+        return message;
     }
 
     @ExceptionHandler(UserAlreadyExistException.class)
