@@ -91,6 +91,10 @@ public class ServiceProviderService {
                 serviceProviderBuilder.breakHour(Arrays.toString(request.getData().getBreakHour()));
             }
 
+            if (request.getData().getServiceProviderImage() != null){
+                serviceProviderBuilder.serviceProviderImage(request.getData().getServiceProviderImage());
+            }
+
             serviceProvider = serviceProviderBuilder.build();
             serviceProvider = serviceProviderRepository.save(serviceProvider); // Save the serviceProvider object to the database
             appointmentService.generateAndSaveServiceProviderSchedule(serviceProvider, branchRepository.findById(branchId).get());

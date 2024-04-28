@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,7 @@ public class ServiceProviderDTO implements DTOInterface{
     private boolean[] workingDays;
     @NotNull(message = "Break hour is required")
     private String[] breakHour;
-    @NotNull(message = "Session duration is required")
+    @Min(value = 15, message = "Session duration is required")
     private int sessionDuration;
     private Set<AppointmentDTO> appointmentsDTO;
     private Long branchId;
