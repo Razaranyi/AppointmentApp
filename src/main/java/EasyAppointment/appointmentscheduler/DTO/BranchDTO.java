@@ -17,17 +17,20 @@ import java.util.Set;
 @Setter
 @ToString
 public class BranchDTO implements DTOInterface{
+
+
     private Long branchId;
+
+
     @NotBlank(message = "Name is required")
     @Pattern(regexp = "^[\\u0590-\\u05FF\\uFB1D-\\uFB4F A-Za-z-\\s']+$", message = "Name must contain only valid characters")
     private String name;
-    @NotBlank(message = "Adress is required")
+    @NotBlank(message = "Adwress is required")
     private String address;
     @NotNull(message = "Closing hours are required")
     private LocalTime closingHours;
     @NotNull(message = "Opening hours are required")
     private LocalTime openingHours;
-    @NotNull(message = "Business id is required")
     private Long businessId;
     private byte[] branchImage;
     private Set<Long> serviceProvidersIds;

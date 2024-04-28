@@ -53,5 +53,4 @@ public class BusinessController {
     public ResponseEntity<ApiResponse<BusinessDTO>> getBusinessId() {
         return ResponseEntity.ok(businessService.getBusinessId());
     }
-
 }
