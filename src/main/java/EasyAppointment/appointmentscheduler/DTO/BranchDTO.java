@@ -25,13 +25,17 @@ public class BranchDTO implements DTOInterface{
     @NotBlank(message = "Name is required")
     @Pattern(regexp = "^[\\u0590-\\u05FF\\uFB1D-\\uFB4F A-Za-z-\\s']+$", message = "Name must contain only valid characters")
     private String name;
-    @NotBlank(message = "Adwress is required")
+
     private String address;
+
     @NotNull(message = "Closing hours are required")
     private LocalTime closingHours;
+
     @NotNull(message = "Opening hours are required")
     private LocalTime openingHours;
+
     private Long businessId;
+    @NotNull(message = "Branch image is required")
     private byte[] branchImage;
     private Set<Long> serviceProvidersIds;
 

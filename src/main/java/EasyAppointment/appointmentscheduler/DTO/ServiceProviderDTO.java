@@ -1,5 +1,6 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
+import EasyAppointment.appointmentscheduler.models.Appointment;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -26,8 +27,10 @@ public class ServiceProviderDTO implements DTOInterface{
     private String[] breakHour;
     @Min(value = 15, message = "Session duration is required")
     private int sessionDuration;
-    private Set<AppointmentDTO> appointmentsDTO;
+    private Set<Long> appointmentsIds;
     private Long branchId;
+
+    @NotNull(message = "Service Provider image is required")
     private byte[] serviceProviderImage;
 
 
@@ -45,9 +48,7 @@ public class ServiceProviderDTO implements DTOInterface{
 
         this.branchId = serviceProvider.getBranch().getId();
         if (serviceProvider.getAppointments() != null) {
-            this.appointmentsDTO = serviceProvider.getAppointments().stream()
-                    .map(AppointmentDTO::new)
-                    .collect(Collectors.toSet());
+            this.appointmentsIds = serviceProvider.getAppointments().stream().map(Appointment::getId).collect(Collectors.toSet());
         }
         if (serviceProvider.getServiceProviderImage() != null) {
             this.serviceProviderImage = serviceProvider.getServiceProviderImage();
