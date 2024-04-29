@@ -54,9 +54,9 @@ public class BranchController {
 
     }
 
-    @GetMapping("/{brancName}/get-id")
-    public ResponseEntity<ApiResponse<BranchDTO>> getBranchId(@PathVariable Long businessId, @PathVariable String brancName) {
-        String parsedBranchName = brancName.replace("_", " ");
-        return ResponseEntity.ok(branchService.getBranchId(businessId, parsedBranchName));
+    @GetMapping("/{branchName}/get-id")
+    public ResponseEntity<ApiResponse<BranchDTO>> getBranchId(@PathVariable Long businessId, @PathVariable String branchName) {
+
+        return ResponseEntity.ok(branchService.getBranchId(businessId, branchName));
     }
 }

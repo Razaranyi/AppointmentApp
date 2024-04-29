@@ -24,6 +24,7 @@ public class ServiceProviderService {
     private final AppointmentService appointmentService;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId,Long businessId) {
         System.out.println("get service provider list by branch request: " + branchId + " businessId: " + businessId);
         Optional<Branch> branchOptional = branchRepository.findById(branchId);
