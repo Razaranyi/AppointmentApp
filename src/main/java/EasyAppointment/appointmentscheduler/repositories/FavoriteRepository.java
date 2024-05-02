@@ -15,4 +15,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
 
     boolean existsByUserEmailAndBusinessId(@Email(message = "Email is not valid") String user_email, Long business_id);
+
+    Favorite findByUserEmailAndBusinessId(String userEmail, long id);
 }

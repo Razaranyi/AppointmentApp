@@ -3,6 +3,7 @@ package EasyAppointment.appointmentscheduler.DTO;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Category;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class BusinessDTO implements DTOInterface {
     private String name;
 
     private Set<String> businessCategories;
+    @NotNull(message = "Logo image is required")
     private byte[] logoImage;
 
     public BusinessDTO(Business business) {

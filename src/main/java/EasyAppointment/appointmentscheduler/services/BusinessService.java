@@ -127,4 +127,10 @@ public class BusinessService {
                 .map(business1 -> new ApiResponse<>(true, "Business found", new BusinessDTO(business1)))
                 .orElseGet(() -> new ApiResponse<>(false, "Business not found", null));
     }
+
+  @Transactional(readOnly = true)
+   public ApiResponse<BusinessDTO> getBusinessById(Long id) {
+        Business business = findById(id);
+        return new ApiResponse<>(true, "Business found", new BusinessDTO(business));
+    }
 }
