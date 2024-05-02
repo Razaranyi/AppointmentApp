@@ -22,4 +22,10 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
+    @GetMapping("/get-seven")
+    public ResponseEntity<List<CategoryDto>> getSevenCategories() {
+        return ResponseEntity.ok(categoryService.getSevenCategories());
+    }
+
 }

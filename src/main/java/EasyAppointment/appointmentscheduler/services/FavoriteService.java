@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ public class FavoriteService {
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
 
+   @Transactional
     public ApiResponse<List<FavoriteDTO>> getFavoritesForAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserEmail = authentication.getName(); // Get the email from the current authentication principal
@@ -56,25 +58,30 @@ public class FavoriteService {
     }
 
 
-    public ApiResponse<FavoriteDTO> addFavorite(ApiRequest<FavoriteDTO> request, String userEmail) throws RuntimeException {
+    @Transactional
+    public ApiResponse<FavoriteDTO> addFavorite(long id, String userEmail) throws RuntimeException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
-        Business business = businessRepository.findById(request.getData().getBusinessId())
-                .orElseThrow(() -> new NoSuchElementException("Business not found with id: " + request.getData().getBusinessId())
+        Business business = businessRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Business not found with id: " + id)
 );
-        if (favoriteRepository.existsByUserEmailAndBusinessId(userEmail, request.getData().getBusinessId())) {
-            throw new FavoriteAlreadyExistsException("Favorite already exists for this user and business.");
+        if (favoriteRepository.existsByUserEmailAndBusinessId(userEmail, id)) {
+            favoriteRepository.delete(favoriteRepository.findByUserEmailAndBusinessId(userEmail, id));
+            return new ApiResponse<>(true, "Favorite removed", null);
+        }
+        else  {
+            Favorite newFavorite = Favorite.builder()
+                    .user(user)
+                    .business(business)
+                    .build();
+            Favorite savedFavorite = favoriteRepository.save(newFavorite);
+            user.setFavorite(savedFavorite);
+            userRepository.save(user);
+            FavoriteDTO favoriteDTO = new FavoriteDTO(savedFavorite.getId(), savedFavorite.getUser().getId(), savedFavorite.getBusiness().getId());
+            return new ApiResponse<>(true, "Favorite added", favoriteDTO);
         }
 
-        Favorite newFavorite = Favorite.builder()
-                .user(user)
-                .business(business)
-                .build();
-        Favorite savedFavorite = favoriteRepository.save(newFavorite);
-        user.setFavorite(savedFavorite);
-        userRepository.save(user);
-        FavoriteDTO favoriteDTO = new FavoriteDTO(savedFavorite.getId(), savedFavorite.getUser().getId(), savedFavorite.getBusiness().getId());
-        return new ApiResponse<>(true, "Favorite added", favoriteDTO);
+
     }
     private FavoriteDTO convertToDTO(Favorite favorite) {
         return new FavoriteDTO(favorite.getId(), favorite.getUser().getId(), favorite.getBusiness().getId());

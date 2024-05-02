@@ -68,11 +68,6 @@ public class Business {
     @Setter
     private Set<User> users = new HashSet<>();
 
-    public Business(String name, Set<Category> businessCategories, Set<User> users) {
-        this.name = name;
-        this.businessCategories = businessCategories;
-        this.users = users;
-    }
 }
 
 

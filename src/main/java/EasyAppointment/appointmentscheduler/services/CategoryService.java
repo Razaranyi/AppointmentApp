@@ -5,6 +5,7 @@ import EasyAppointment.appointmentscheduler.models.Category;
 import EasyAppointment.appointmentscheduler.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategories(){
         return categoryRepository
                 .findAll()
@@ -22,12 +24,22 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+   @Transactional
     public void initialCategories(List<String> categories){
         categories.forEach(category -> {
             if(!categoryRepository.existsByName(category)){
                 categoryRepository.save(new Category(category));
             }
         });
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryDto> getSevenCategories() {
+        return categoryRepository
+                .findRandomSevenCategories()
+                .stream()
+                .map(CategoryDto::new)
+                .collect(Collectors.toList());
     }
 }
 

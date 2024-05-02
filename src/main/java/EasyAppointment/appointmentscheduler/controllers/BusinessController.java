@@ -53,4 +53,9 @@ public class BusinessController {
     public ResponseEntity<ApiResponse<BusinessDTO>> getBusinessId() {
         return ResponseEntity.ok(businessService.getBusinessId());
     }
+
+    @GetMapping("/get-business-by-id/{id}")
+    public ResponseEntity<ApiResponse<BusinessDTO>> getBusinessById(@PathVariable Long id) {
+        return ResponseEntity.ok(businessService.getBusinessById(id));
+    }
 }
