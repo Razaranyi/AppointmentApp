@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -23,15 +24,14 @@ import java.util.Optional;
 public class BusinessController {
     private final BusinessService businessService;
 
-    @GetMapping("/my-business")// fix this method to return all relevant business data
-    public ResponseEntity<BusinessDTO> getMyBusiness() {
+    @GetMapping("/my-business")
+    public ResponseEntity<ApiResponse<BusinessDTO>> getMyBusiness() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserEmail = authentication.getName();
-        Optional<Business> businessOptional = businessService.getBusinessByEmail(authenticatedUserEmail);
+        return ResponseEntity.ok(businessService.getBusinessByEmail(authenticatedUserEmail));
 
-        return businessOptional
-                .map(business -> ResponseEntity.ok(new BusinessDTO(business)))
-                .orElse(ResponseEntity.notFound().build());
+
     }
 
     @PostMapping("/create")
