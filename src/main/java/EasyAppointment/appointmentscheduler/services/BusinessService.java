@@ -36,6 +36,8 @@ public class BusinessService {
             throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+
+        // TODO: Uncomment this block of code
 //        if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
 //            throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
 //        }
@@ -88,25 +90,21 @@ public class BusinessService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Business> getBusinessByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(User::getBusiness);
+    public ApiResponse<BusinessDTO> getBusinessByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        Business business = user.getBusiness();
+        if (business == null) {
+            throw new NoSuchElementException("Business not found");
+        }
+        return new ApiResponse<>(true, "Business found", new BusinessDTO(business));
     }
 
+    @Transactional(readOnly = true)
     public Business findById(Long id) {
         return businessRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Business with id " + id + " not found"));
-    }
-
-    public void save(Business business) {
-        businessRepository.save(business);
-    }
-
-    public ApiResponse<BusinessDTO> addLogoToBusiness(Long id, byte[] logoImage) {
-        Business business = findById(id);
-        business.setLogoImage(logoImage);
-        save(business);
-        return new ApiResponse<>(true, "Logo added successfully", new BusinessDTO(business));
     }
 
 
