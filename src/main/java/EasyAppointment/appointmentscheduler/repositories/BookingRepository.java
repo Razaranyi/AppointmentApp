@@ -18,8 +18,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "GROUP BY b HAVING COUNT(DISTINCT a.id) = :numberOfAppointments")
     Optional<Booking> findBookingByAllAppointments(@Param("appointmentIds") Set<Long> appointmentIds,
                                                    @Param("numberOfAppointments") long numberOfAppointments);
-    @Query("SELECT b FROM Booking b JOIN b.appointments a WHERE a.id = :appointmentId")
-    Optional<Booking> findByAppointmentId(Long appointmentId);
-
 
 }

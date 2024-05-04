@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,12 +41,13 @@ public class AppointmentService {
     public List<AppointmentDTO> getAppointmentsByServiceProviderIdForDay(Long serviceProviderId, LocalDate date) {
         //validate future date
         if (date.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Date must be in the future"); //unhandled but the user will get empty list
+            throw new IllegalArgumentException("Date must be in the future");
         }
         return appointmentRepository.findByServiceProviderIdAndStartTimeBetween(serviceProviderId,
                         date.atStartOfDay(),
                         date.atTime(LocalTime.MAX))
                 .stream()
+                .sorted(Comparator.comparing(Appointment::getStartTime))
                 .map(AppointmentDTO::new)
                 .collect(Collectors.toList());
     }
@@ -61,18 +63,23 @@ public class AppointmentService {
 
         boolean[] workingDays = serviceProvider.getWorkingDays();
         int sessionDuration = serviceProvider.getSessionDuration();
+
+        //adding each day until the scheduling horizon and just then moving to the next day
         for (int i = 0; i < workingDays.length; i++) {
             System.out.println("Generating appointments for day " + (i + 1) + "...");
+
+            //skip if not a working day
             if (workingDays[i]) {
                 DayOfWeek dayOfWeek = DayOfWeek.of(i + 1);  // Convert integer to DayOfWeek
                 LocalDate nextDate = getNextWorkingDay(today, dayOfWeek,workingDays[i]);
 
-                while (!nextDate.isAfter(schedulingHorizon)) {
+                while (!nextDate.isAfter(schedulingHorizon)) { //today is handled as an edge case inside nextDate function
                     LocalDateTime start = LocalDateTime.of(nextDate, branch.getOpeningHours());
                     LocalDateTime end = LocalDateTime.of(nextDate, branch.getClosingHours());
 
-                    while (start.isBefore(end) && start.plusMinutes(sessionDuration).isBefore(end)) {
-                        if (!isDuringBreak(start.toLocalTime(), start.plusMinutes(sessionDuration).toLocalTime(), breakTimes)) {
+                    while (start.isBefore(end) && start.plusMinutes(sessionDuration).isBefore(end)) { // break on EOD and move to the same day on next week
+
+                        if (!isDuringBreak(start.toLocalTime(), start.plusMinutes(sessionDuration).toLocalTime(), breakTimes)) { //check if the current time is during a break
                             Appointment appointment = Appointment.builder()
                                     .serviceProvider(serviceProvider)
                                     .startTime(start)
@@ -84,9 +91,9 @@ public class AppointmentService {
                             appointments.add(appointment);
                         }
 
-                        start = start.plusMinutes(sessionDuration);
+                        start = start.plusMinutes(sessionDuration); //update current time to the end of the session
 
-                        if (isDuringBreak(start.toLocalTime(), start.plusMinutes(sessionDuration).toLocalTime(), breakTimes)) {
+                        if (isDuringBreak(start.toLocalTime(), start.plusMinutes(sessionDuration).toLocalTime(), breakTimes)) { //update current time to the end of the break
                             LocalTime nextBreakEnd = findNextBreakEnd(start.toLocalTime(), breakTimes);
                             start = LocalDateTime.of(nextDate, nextBreakEnd);
                         }

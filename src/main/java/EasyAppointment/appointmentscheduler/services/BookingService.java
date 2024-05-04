@@ -33,7 +33,7 @@ public class BookingService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ApiResponse<BookingDTO> createNewBooking(Long serviceProviderId, ApiRequest<BookingDTO> request) {
+    public ApiResponse<BookingDTO> createNewBooking(ApiRequest<BookingDTO> request) {
         Set<Appointment> appointments = new HashSet<>(appointmentRepository.findAllById(request.getData().getAppointmentsIds()));
 
         User user = userRepository.findByEmail(AuthHelper.getCaller())
@@ -42,7 +42,7 @@ public class BookingService {
         // Building the Booking object with initialized appointments
         Booking booking = Booking.builder()
                 .bookingTime(request.getData().getBookingTime())
-                .serviceProvider(serviceProviderRepository.getReferenceById(serviceProviderId))
+                .serviceProvider(serviceProviderRepository.getReferenceById(request.getData().getServiceProviderId()))
                 .user(user)
                 .appointments(new HashSet<>())
                 .build();
@@ -86,26 +86,55 @@ public class BookingService {
         return new ApiResponse<>(true, "Booked appointments fetched successfully", appointmentDTOs);
     }
 
+
+
     @Transactional
-    public ApiResponse<BookingDTO> cancelBookedAppointment(Set<Long> appointmentId) {
-        Booking booking = bookingRepository.findBookingByAllAppointments(appointmentId, appointmentId.size())
-                .filter(b -> "Confirmed".equals(b.getStatus()))
-                .orElseThrow(() -> new NoSuchElementException("Booking not found"));
-        if (booking.getAppointments().size() == appointmentId.size()) {
+    public ApiResponse<BookingDTO> cancelBooking(long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new NoSuchElementException("Appointment not found with ID: " + appointmentId));
+
+        Booking booking = appointment.getBooking();
+
+        if ("Confirmed".equals(booking.getStatus())) {
             booking.setStatus("Cancelled");
+            for (Appointment appt : booking.getAppointments()) {
+                appt.setAvailable(true);
+                booking.removeAppointment(appt);
+            }
+            bookingRepository.save(booking);
+            appointmentRepository.saveAll(booking.getAppointments());
+            return new ApiResponse<>(true, "Booking cancelled successfully", new BookingDTO(booking));
+        } else {
+            throw new IllegalStateException("Booking is already cancelled or not in a cancellable state.");
         }
-        else booking.setStatus("Partially Cancelled");
-
-        for (Appointment appointment : booking.getAppointments()) {
-            appointment.setAvailable(true);
-            booking.removeAppointment(appointment);
-        }
-        bookingRepository.save(booking);
-        appointmentRepository.saveAll(booking.getAppointments());
-        return new ApiResponse<>(true, "Booking cancelled successfully", new BookingDTO(booking));
-
-
     }
+
+
+    //this is a function to cancel a booking containing multiple appointments but it is not possible in the ui the book several appointments at once so it's comment out
+
+
+
+    //    @Transactional
+//    public ApiResponse<BookingDTO> cancelBooked(Set<Long> appointmentId) {
+//        Booking booking = bookingRepository.findBookingByAllAppointments(appointmentId, appointmentId.size())
+//                .filter(b -> "Confirmed".equals(b.getStatus()))
+//                .orElseThrow(() -> new NoSuchElementException("Booking not found"));
+//        if (booking.getAppointments().size() == appointmentId.size()) {
+//            booking.setStatus("Cancelled");
+//        }
+//        else booking.setStatus("Partially Cancelled");
+//
+//        for (Appointment appointment : booking.getAppointments()) {
+//            appointment.setAvailable(true);
+//            booking.removeAppointment(appointment);
+//        }
+//        bookingRepository.save(booking);
+//        appointmentRepository.saveAll(booking.getAppointments());
+//        return new ApiResponse<>(true, "Booking cancelled successfully", new BookingDTO(booking));
+//
+//
+//    }
+
 
    @Transactional(readOnly = true)
     public ApiResponse<UserDTO> getBookedUserAppointments(Long bookingId) {

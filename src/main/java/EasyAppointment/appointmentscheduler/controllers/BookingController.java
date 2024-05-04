@@ -13,8 +13,14 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
     private final BookingService bookingService;
 
-    @PostMapping("/create")
-    public ApiResponse<BookingDTO> createNewBooking(@RequestParam Long serviceProviderId,@RequestBody ApiRequest<BookingDTO> request) {
-        return bookingService.createNewBooking(serviceProviderId, request);
+    @PostMapping("/book")
+    public ApiResponse<BookingDTO> createNewBooking(@RequestBody ApiRequest<BookingDTO> request) {
+        System.out.println(" REQUEST: " + request.toString());
+        return bookingService.createNewBooking(request);
+    }
+
+    @PostMapping ("/cancel/{appointmentId}")
+    public ApiResponse<BookingDTO> cancelBooking(@PathVariable Long appointmentId) {
+        return bookingService.cancelBooking(appointmentId);
     }
 }
