@@ -27,5 +27,6 @@ public class AppointmentDTO implements DTOInterface{
         this.endTime = appointment.getEndTime();
         this.isAvailable = appointment.isAvailable();
         this.bookingId = (appointment.getBooking() != null) ? appointment.getBooking().getBookingId() : null;
+        this.serviceProviderId = appointment.getServiceProvider().getId();
     }
 }

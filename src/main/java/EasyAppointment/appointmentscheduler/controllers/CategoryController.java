@@ -18,13 +18,13 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+//        return ResponseEntity.ok(categoryService.getAllCategories());
+//    }
 
-    @GetMapping("/get-seven")
-    public ResponseEntity<List<CategoryDto>> getSevenCategories() {
+    @GetMapping("/get-all")
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getSevenCategories());
     }
 

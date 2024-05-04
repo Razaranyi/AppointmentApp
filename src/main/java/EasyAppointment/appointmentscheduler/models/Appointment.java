@@ -32,7 +32,7 @@ public class Appointment {
 
     @Column(name = "start_time", nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull(message = "Start time is required")
-    @Future(message = "Start time must be in the future")
+//    @Future(message = "Start time must be in the future")
     @Getter
     @Setter
     private LocalDateTime startTime;
