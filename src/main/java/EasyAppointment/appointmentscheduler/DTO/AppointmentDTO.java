@@ -20,6 +20,7 @@ public class AppointmentDTO implements DTOInterface{
     private Boolean isAvailable;
     private Long bookingId;
     private Long serviceProviderId;
+    private String name;
 
     public AppointmentDTO(Appointment appointment) {
         this.id = appointment.getId();
@@ -27,5 +28,10 @@ public class AppointmentDTO implements DTOInterface{
         this.endTime = appointment.getEndTime();
         this.isAvailable = appointment.isAvailable();
         this.bookingId = (appointment.getBooking() != null) ? appointment.getBooking().getBookingId() : null;
+        this.serviceProviderId = appointment.getServiceProvider().getId();
+
+        if (appointment.getBooking() != null) {
+            this.name = appointment.getBooking().getUser().getFullName();
+        }
     }
 }

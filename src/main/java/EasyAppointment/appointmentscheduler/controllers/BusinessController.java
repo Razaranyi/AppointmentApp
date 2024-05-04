@@ -30,8 +30,6 @@ public class BusinessController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserEmail = authentication.getName();
         return ResponseEntity.ok(businessService.getBusinessByEmail(authenticatedUserEmail));
-
-
     }
 
     @PostMapping("/create")

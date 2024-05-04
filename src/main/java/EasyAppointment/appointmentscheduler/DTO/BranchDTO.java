@@ -2,6 +2,7 @@ package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
+import EasyAppointment.appointmentscheduler.util.Validationutils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -46,6 +47,10 @@ public class BranchDTO implements DTOInterface{
         this.address = branch.getAddress();
         this.businessId = branch.getBusiness().getId();
         this.serviceProvidersIds = branch.getServiceProviders().stream().map(ServiceProvider::getId).collect(java.util.stream.Collectors.toSet());
+
+        if (!Validationutils.isOpeningTimeBeforeClosingTime(branch.getOpeningHours(), branch.getClosingHours())) {
+            throw new IllegalArgumentException("Opening time must be before closing time");
+        }
         this.closingHours = branch.getClosingHours();
         this.openingHours = branch.getOpeningHours();
         if (branch.getBranchImage() != null) {

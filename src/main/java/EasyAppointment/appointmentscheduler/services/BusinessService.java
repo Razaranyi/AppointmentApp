@@ -67,27 +67,7 @@ public class BusinessService {
         return new ApiResponse<>(true, "Business created successfully", businessDTO);
     }
 
-    @Transactional
-    public List<Business> getBusinessesByCategory(String categoryName) {
-        return categoryRepository.findByName(categoryName)
-                .map(Category::getBusinesses)
-                .map(Set::stream)
-                .map(stream -> stream.collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
-    }
 
-    @Transactional
-    public Map<Category, Set<Business>> getBusinessesFromRandomCategories(int numberOfCategories) {
-        List<Category> categories = categoryRepository.findAll();
-        Collections.shuffle(categories);
-
-        Map<Category, Set<Business>> categoryBusinessMap = new LinkedHashMap<>();
-        categories.stream()
-                .limit(numberOfCategories)
-                .forEach(category -> categoryBusinessMap.put(category, category.getBusinesses()));
-
-        return categoryBusinessMap;
-    }
 
     @Transactional(readOnly = true)
     public ApiResponse<BusinessDTO> getBusinessByEmail(String email) {

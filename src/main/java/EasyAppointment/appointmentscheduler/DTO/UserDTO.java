@@ -23,9 +23,10 @@ public class UserDTO implements DTOInterface {
     private String email;
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
-    private boolean isAdmin;
 
-
-    public void setIsAdmin(boolean isAdmin) {
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.fullName = user.getFullName();
+        this.email = user.getEmail();
     }
 }

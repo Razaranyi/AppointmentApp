@@ -48,7 +48,7 @@ public class Booking {
     private User user;
 
     @Setter
-    @OneToOne
+    @ManyToOne
     @Nullable
     @JoinColumn(name = "service_provider_id", foreignKey = @ForeignKey(name = "FK_ServiceProvider_Booking"))
     private ServiceProvider serviceProvider;

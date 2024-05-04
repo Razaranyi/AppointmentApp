@@ -64,13 +64,9 @@ public class BranchService {
     }
 
     @Transactional(readOnly = true)
-    public ApiResponse<List<BranchDTO>> getBranchesByAuthenticatedBusinessOwner() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //looks like best practice to authenticate user
-        String authenticatedUserEmail = authentication.getName();
-        User user = userRepository.findByEmail(authenticatedUserEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));
-        Business business = businessRepository.findByUsersContains(user)
-                .orElseThrow(() -> new RuntimeException("Business not found for user: " + authenticatedUserEmail));
+    public ApiResponse<List<BranchDTO>> getBranchesForBusinessId(long businessId) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new RuntimeException("Business not found with id: " + businessId));
         List<Branch> branches = branchRepository.findByBusiness(business);
 
         List<BranchDTO> branchDTOs = branches.stream()

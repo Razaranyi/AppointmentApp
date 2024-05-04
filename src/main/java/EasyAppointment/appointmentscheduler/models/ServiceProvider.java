@@ -66,8 +66,8 @@ public class ServiceProvider {
 
     @Setter
     @Getter
-    @OneToOne(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
-    private Booking booking;
+    @OneToMany(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
+    private Set<Booking> bookings;
 
 
 

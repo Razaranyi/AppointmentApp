@@ -18,14 +18,14 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
 
-    @GetMapping("/all")
+    @GetMapping("/initial")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
-    @GetMapping("/get-seven")
-    public ResponseEntity<List<CategoryDto>> getSevenCategories() {
-        return ResponseEntity.ok(categoryService.getSevenCategories());
+    @GetMapping("/get-all")
+    public ResponseEntity<List<CategoryDto>> getRandomOrderCategories() {
+        return ResponseEntity.ok(categoryService.getRandomOrderCategories());
     }
 
 }
