@@ -34,7 +34,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDto> getSevenCategories() {
+    public List<CategoryDto> getRandomOrderCategories() {
         return categoryRepository
                 .findRandomSevenCategories()
                 .stream()

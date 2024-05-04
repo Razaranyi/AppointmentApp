@@ -24,9 +24,9 @@ public class BranchController {
 
     @GetMapping("/get-all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesByAuthenticatedBusinessOwner(@PathVariable String businessId) {
+    public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesForBusinessId(@PathVariable long businessId) {
         try {
-            return ResponseEntity.ok(branchService.getBranchesByAuthenticatedBusinessOwner());
+            return ResponseEntity.ok(branchService.getBranchesForBusinessId(businessId));
         }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(
                     ApiResponse.<List<BranchDTO>>builder()
