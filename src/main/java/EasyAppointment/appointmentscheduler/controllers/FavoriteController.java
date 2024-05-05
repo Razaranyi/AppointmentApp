@@ -15,26 +15,36 @@ import EasyAppointment.appointmentscheduler.services.FavoriteService;
 
 import java.util.List;
 
+/**
+ * This is the controller for the Favorite entity.
+ * It handles HTTP requests and responses related to Favorite operations.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/favorites")
 public class FavoriteController {
     private final FavoriteService favoriteService;
 
-    @GetMapping("/my-favorites") // get list of up to 7 personal favorites for the authenticated user
+    /**
+     * This method handles the GET request to retrieve the list of up to 7 personal favorites for the authenticated user.
+     *
+     * @return ResponseEntity containing ApiResponse with List of FavoriteDTO
+     */
+    @GetMapping("/my-favorites")
     public ResponseEntity<ApiResponse<List<FavoriteDTO>>> getMyFavorites() {
-            return ResponseEntity.ok(favoriteService.getFavoritesForAuthenticatedUser());
+        return ResponseEntity.ok(favoriteService.getFavoritesForAuthenticatedUser());
     }
 
-
+    /**
+     * This method handles the POST request to add a business to the favorites of the authenticated user.
+     * @param id The ID of the business to be added to favorites.
+     * @return ResponseEntity containing ApiResponse with FavoriteDTO
+     */
     @PostMapping("/add-or-remove/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<FavoriteDTO>> addFavorite( // add business to the favorites
+    public ResponseEntity<ApiResponse<FavoriteDTO>> addFavorite(
             @PathVariable Long id){
         String userEmail = AuthHelper.getCaller();
-
-            return ResponseEntity.ok(favoriteService.addFavorite(id, userEmail));
+        return ResponseEntity.ok(favoriteService.addFavorite(id, userEmail));
     }
-
-
 }
