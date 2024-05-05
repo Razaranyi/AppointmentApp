@@ -16,9 +16,21 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class is a global exception handler for the application.
+ * It catches exceptions that are thrown during the execution of the application and returns appropriate HTTP responses.
+ * It is annotated with @ControllerAdvice, which makes it applicable to all @Controller classes.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * This method builds an error response to be returned when an exception is caught.
+     * It takes a message and a status as parameters, and returns a ResponseEntity with these details.
+     * @param message The error message.
+     * @param status The HTTP status.
+     * @return A ResponseEntity with the error details.
+     */
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new LinkedHashMap<>();
         String refinedMessage = extractMessage(message);
@@ -30,6 +42,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
     }
 
+    /**
+     * This method extracts the error message from the exception message.
+     * If the message contains "=", it extracts the substring after "=" and before "}" or the end of the message.
+     * @param message The exception message.
+     * @return The extracted error message.
+     */
     private String extractMessage(String message) {
         if (message.contains("=")) {
             int index = message.indexOf('=') + 1;
@@ -41,6 +59,11 @@ public class GlobalExceptionHandler {
         }
         return message;
     }
+
+    // The following methods are exception handlers for different types of exceptions.
+    // They are annotated with @ExceptionHandler, which makes them handle exceptions of the specified type.
+    // When an exception of the specified type is thrown, the corresponding method is invoked to handle it.
+    // Each method returns a ResponseEntity with the error details by calling the buildErrorResponse method.
 
     @ExceptionHandler(UserAlreadyExistException.class)
     public ResponseEntity<Object> handleUserAlreadyExists(UserAlreadyExistException ex) {
@@ -78,7 +101,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class) //database error readable message
+    @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String detailedMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
         Pattern pattern = Pattern.compile("null value in column \"([^\"]*)\"");
