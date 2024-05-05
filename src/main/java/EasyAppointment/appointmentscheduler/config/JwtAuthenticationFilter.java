@@ -17,12 +17,25 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
+/**
+ * This is the filter for JWT authentication.
+ * It handles the extraction of the JWT from the Authorization header and validates it.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    /**
+     * This method handles the filtering of HTTP requests and responses.
+     * It extracts the JWT from the Authorization header, validates it, and sets the authentication in the security context.
+     * @param request The HTTP request.
+     * @param response The HTTP response.
+     * @param filterChain The filter chain.
+     * @throws ServletException if a servlet-specific error occurs.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     protected void doFilterInternal(
             @NotNull HttpServletRequest request,
