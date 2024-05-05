@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * This is a data transfer object (DTO) for Appointment.
+ * It is used to send data over the network or between processes.
+ * It includes all the necessary information about an appointment.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +26,11 @@ public class AppointmentDTO implements DTOInterface{
     private String bookingUserName;
     private String bookedBusinessName;
 
+    /**
+     * This constructor is used to create an AppointmentDTO from an Appointment object.
+     * It copies all the necessary information from the Appointment object to the AppointmentDTO.
+     * @param appointment The Appointment object to be converted into an AppointmentDTO.
+     */
     public AppointmentDTO(Appointment appointment) {
         this.id = appointment.getId();
         this.startTime = appointment.getStartTime();
