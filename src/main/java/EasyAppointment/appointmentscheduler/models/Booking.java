@@ -38,7 +38,7 @@ public class Booking {
     private String status;
 
     @Setter
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "booking")
     private Set<Appointment> appointments;
 
     @Setter

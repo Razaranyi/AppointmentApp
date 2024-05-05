@@ -1,10 +1,7 @@
 package EasyAppointment.appointmentscheduler.DTO;
 
 import EasyAppointment.appointmentscheduler.models.Appointment;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AppointmentDTO implements DTOInterface{
     private Long id;
     private LocalDateTime startTime;
@@ -20,7 +18,7 @@ public class AppointmentDTO implements DTOInterface{
     private Boolean isAvailable;
     private Long bookingId;
     private Long serviceProviderId;
-    private String name;
+    private String bookingUserName;
 
     public AppointmentDTO(Appointment appointment) {
         this.id = appointment.getId();
@@ -31,7 +29,7 @@ public class AppointmentDTO implements DTOInterface{
         this.serviceProviderId = appointment.getServiceProvider().getId();
 
         if (appointment.getBooking() != null) {
-            this.name = appointment.getBooking().getUser().getFullName();
+            this.bookingUserName = appointment.getBooking().getUser().getFullName();
         }
     }
 }
