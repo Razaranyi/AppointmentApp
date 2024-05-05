@@ -21,6 +21,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * This class provides services related to businesses.
+ * It uses Spring's @Service annotation to indicate that it's a service class.
+ * It uses Lombok's @RequiredArgsConstructor to automatically generate a constructor with required fields.
+ */
 @Service
 @RequiredArgsConstructor
 public class BusinessService {
@@ -30,6 +35,15 @@ public class BusinessService {
     private final BusinessRepository businessRepository;
 
 
+    /**
+     * This method adds a new business.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param request The request containing the business data.
+     * @param userEmail The email of the user who is adding the business.
+     * @return An ApiResponse object containing the result of the operation.
+     * @throws UserAlreadyOwnException if the user already owns a business.
+     * @throws UsernameNotFoundException if the user is not found.
+     */
     @Transactional
     public ApiResponse<BusinessDTO> addBusiness(ApiRequest<BusinessDTO> request, String userEmail)
             throws UserAlreadyOwnException, UsernameNotFoundException {
@@ -66,7 +80,12 @@ public class BusinessService {
     }
 
 
-
+    /**
+     * This method retrieves the business associated with a specific email.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param email The email of the user.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional(readOnly = true)
     public ApiResponse<BusinessDTO> getBusinessByEmail(String email) {
         User user = userRepository.findByEmail(email)
@@ -79,13 +98,23 @@ public class BusinessService {
         return new ApiResponse<>(true, "Business found", new BusinessDTO(business));
     }
 
+    /**
+     * This method retrieves a business by its ID.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param id The ID of the business.
+     * @return The Business object.
+     */
     @Transactional(readOnly = true)
     public Business findById(Long id) {
         return businessRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Business with id " + id + " not found"));
     }
 
-
+    /**
+     * This method retrieves the ID of the business associated with the currently authenticated user.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @return An ApiResponse object containing the result of the operation.
+     */
    @Transactional(readOnly = true)
     public ApiResponse<BusinessDTO> getBusinessId() {
 
@@ -104,6 +133,13 @@ public class BusinessService {
                 .orElseGet(() -> new ApiResponse<>(false, "Business not found", null));
     }
 
+
+    /**
+     * This method retrieves a business by its ID.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param id The ID of the business.
+     * @return An ApiResponse object containing the result of the operation.
+     */
   @Transactional(readOnly = true)
    public ApiResponse<BusinessDTO> getBusinessById(Long id) {
         Business business = findById(id);

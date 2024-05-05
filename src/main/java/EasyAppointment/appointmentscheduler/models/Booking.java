@@ -83,6 +83,13 @@ public class Booking {
     private ServiceProvider serviceProvider;
 
     /**
+     * The version field for optimistic locking.
+     * It is automatically managed by JPA.
+     */
+    @Version
+    private int version;
+
+    /**
      * Adds an appointment to the booking.
      * It also sets the booking of the appointment to this booking.
      * @param appointment The appointment to be added.

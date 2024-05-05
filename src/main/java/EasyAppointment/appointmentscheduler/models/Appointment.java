@@ -96,6 +96,13 @@ public class Appointment {
     private ServiceProvider serviceProvider;
 
     /**
+     * The version field for optimistic locking.
+     * It is automatically managed by JPA.
+     */
+    @Version
+    private int version;
+
+    /**
      * Returns the availability of the appointment.
      * @return true if the appointment is available, false otherwise.
      */
