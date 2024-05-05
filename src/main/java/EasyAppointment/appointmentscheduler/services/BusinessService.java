@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
+import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnsBusinessException;
@@ -90,8 +91,8 @@ public class BusinessService {
 
    @Transactional(readOnly = true)
     public ApiResponse<BusinessDTO> getBusinessId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserEmail = authentication.getName();
+
+        String authenticatedUserEmail = AuthHelper.getCaller();
 
         User user = userRepository.findByEmail(authenticatedUserEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));

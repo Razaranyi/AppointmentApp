@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.FavoriteDTO;
+import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.exception.FavoriteAlreadyExistsException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Favorite;
@@ -32,8 +33,7 @@ public class FavoriteService {
 
    @Transactional
     public ApiResponse<List<FavoriteDTO>> getFavoritesForAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserEmail = authentication.getName(); // Get the email from the current authentication principal
+        String authenticatedUserEmail = AuthHelper.getCaller();
 
         User user = userRepository.findByEmail(authenticatedUserEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authenticatedUserEmail));

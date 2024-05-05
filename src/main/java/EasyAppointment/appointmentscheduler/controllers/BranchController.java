@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.controllers;
 
 import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
+import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import EasyAppointment.appointmentscheduler.services.BranchService;
@@ -46,10 +47,8 @@ public class BranchController {
             String errorMessages = ControllerUtils.getErrorMessages(result);
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, errorMessages, null));
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-
-            return ResponseEntity.ok(branchService.addBranch(request, userEmail)); //change to businessId instead of userEmail and authenticate with helper
+        String userEmail = AuthHelper.getCaller();
+        return ResponseEntity.ok(branchService.addBranch(request, userEmail)); //change to businessId instead of userEmail and authenticate with helper
 
     }
 

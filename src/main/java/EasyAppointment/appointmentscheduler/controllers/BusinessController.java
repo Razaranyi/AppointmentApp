@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.controllers;
 
 import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
+import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
@@ -27,8 +28,7 @@ public class BusinessController {
     @GetMapping("/my-business")
     public ResponseEntity<ApiResponse<BusinessDTO>> getMyBusiness() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserEmail = authentication.getName();
+        String authenticatedUserEmail = AuthHelper.getCaller();
         return ResponseEntity.ok(businessService.getBusinessByEmail(authenticatedUserEmail));
     }
 
@@ -41,8 +41,7 @@ public class BusinessController {
             String errorMessages = ControllerUtils.getErrorMessages(result);
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, errorMessages, null));
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+        String userEmail = AuthHelper.getCaller();
         return ResponseEntity.ok(businessService.addBusiness(request, userEmail));
     }
 
