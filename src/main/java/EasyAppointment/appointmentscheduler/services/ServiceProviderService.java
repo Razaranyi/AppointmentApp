@@ -15,6 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class provides services related to service providers.
+ * It uses Spring's @Service annotation to indicate that it's a service class.
+ * It uses Lombok's @RequiredArgsConstructor to automatically generate a constructor with required fields.
+ */
 @Service
 @RequiredArgsConstructor
 public class ServiceProviderService {
@@ -23,6 +28,13 @@ public class ServiceProviderService {
     private final BusinessRepository businessRepository;
     private final AppointmentService appointmentService;
 
+    /**
+     * This method retrieves a list of service providers by branch.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param branchId The ID of the branch.
+     * @param businessId The ID of the business.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional(readOnly = true)
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId,Long businessId) {
         System.out.println("get service provider list by branch request: " + branchId + " businessId: " + businessId);
@@ -42,7 +54,15 @@ public class ServiceProviderService {
         return new ApiResponse<>(true, "Service Providers fetched successfully", serviceProviderDTOs);
     }
 
-
+    /**
+     * This method retrieves a service provider by its ID.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param branchId The ID of the branch.
+     * @param serviceProviderId The ID of the service provider.
+     * @param businessId The ID of the business.
+     * @return An ApiResponse object containing the result of the operation.
+     */
+    @Transactional
     public ApiResponse<ServiceProviderDTO> getServiceProvidersById(Long branchId, Long serviceProviderId, Long businessId) {
         Optional<Branch> branchOptional = branchRepository.findById(branchId);
         if (branchOptional.isEmpty()) {
@@ -61,7 +81,14 @@ public class ServiceProviderService {
         ServiceProviderDTO serviceProviderDTO = new ServiceProviderDTO(serviceProvider);
         return new ApiResponse<>(true, "Service Provider fetched successfully", serviceProviderDTO);
     }
-
+    /**
+     * This method adds a service provider.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param branchId The ID of the branch.
+     * @param request The request containing the service provider data.
+     * @param userEmail The email of the user who is adding the service provider.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional
     public ApiResponse<ServiceProviderDTO> addServiceProvider(Long branchId, ApiRequest<ServiceProviderDTO> request,String userEmail) {
         ServiceProvider serviceProvider;
@@ -106,6 +133,14 @@ public class ServiceProviderService {
         return new ApiResponse<>(true, "Service Provider added successfully", new ServiceProviderDTO(serviceProvider));
     }
 
+    /**
+     * This method deletes a service provider.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param branchId The ID of the branch.
+     * @param serviceProviderId The ID of the service provider.
+     * @param userEmail The email of the user who is deleting the service provider.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional
     public ApiResponse<ServiceProvider> deleteServiceProvider(
             Long branchId, Long serviceProviderId, String userEmail) {
@@ -127,6 +162,12 @@ public class ServiceProviderService {
         return new ApiResponse<>(true, "Service Provider deleted successfully", serviceProvider);
     }
 
+    /**
+     * This method checks if a user is authorized.
+     * @param branchId The ID of the branch.
+     * @param userEmail The email of the user.
+     * @return A boolean indicating whether the user is authorized.
+     */
     private boolean isUserAuthorized(Long branchId, String userEmail){
         Optional<Branch> optionalBranch = branchRepository.findById(branchId);
         if (optionalBranch.isEmpty()){
@@ -135,9 +176,23 @@ public class ServiceProviderService {
         Set<User> users = optionalBranch.get().getBusiness().getUsers();
         return users.stream().noneMatch(user -> user.getEmail().equals(userEmail));
     }
+
+    /**
+     * This method checks if a service provider belongs to a branch.
+     * @param branch The Branch object.
+     * @param serviceProvider The ServiceProvider object.
+     * @return A boolean indicating whether the service provider belongs to the branch.
+     */
     private boolean isServiceProviderBelongsToBranch(Branch branch, ServiceProvider serviceProvider){
         return branch.getServiceProviders().contains(serviceProvider);
     }
+
+    /**
+     * This method checks if a branch belongs to a business.
+     * @param branch The Branch object.
+     * @param business The Business object.
+     * @return A boolean indicating whether the branch belongs to the business.
+     */
     private boolean isBranchBelongsToBusiness(Branch branch, Business business){
         return !branch.getBusiness().equals(business);
     }
