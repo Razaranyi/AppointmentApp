@@ -25,4 +25,6 @@ public class AppointmentController {
     public ResponseEntity<List<AppointmentDTO>> getAppointmentByDate(@PathVariable("date") String date, @PathVariable("serviceProviderId") Long serviceProviderId, @PathVariable String branchId, @PathVariable String businessId) {
         return ResponseEntity.ok(appointmentService.getAppointmentsByServiceProviderIdForDay(serviceProviderId, LocalDate.parse(date)));
     }
+
+
 }

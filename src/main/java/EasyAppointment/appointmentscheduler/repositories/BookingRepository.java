@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Optional<Booking> findByUserId(Long userId);
+    List<Booking> findByUserId(Long userId);
 
     @Query("SELECT DISTINCT b FROM Booking b JOIN b.appointments a WHERE a.id IN :appointmentIds " +
             "GROUP BY b HAVING COUNT(DISTINCT a.id) = :numberOfAppointments")

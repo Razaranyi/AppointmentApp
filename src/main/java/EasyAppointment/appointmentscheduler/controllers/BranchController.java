@@ -23,7 +23,6 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping("/get-all")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<BranchDTO>>> getBranchesForBusinessId(@PathVariable long businessId) {
         try {
             return ResponseEntity.ok(branchService.getBranchesForBusinessId(businessId));
