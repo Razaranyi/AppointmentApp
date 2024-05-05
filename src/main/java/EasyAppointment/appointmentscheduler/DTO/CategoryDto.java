@@ -13,7 +13,6 @@ import java.util.Set;
 @Getter
 @Setter
 
-//todo: verify this is working as before
 public class CategoryDto implements DTOInterface{
     private Long id;
     private String name;
