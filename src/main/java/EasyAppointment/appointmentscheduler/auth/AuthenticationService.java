@@ -14,7 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-
+/**
+ * This is the service for authentication operations.
+ * It handles user registration and authentication.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -22,6 +25,14 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    /**
+     * This method handles the registration of a new user.
+     * It checks if a user with the same email already exists, creates a new user, and generates a JWT for the user.
+     * @param request The registration request.
+     * @return AuthenticationResponse containing the JWT and a success message.
+     * @throws UserAlreadyExistException if a user with the same email already exists.
+     */
     public AuthenticationResponse registerUser(RegisterRequest request) throws UserAlreadyExistException {
        if (userRepository.findByEmail(request.getEmail().toLowerCase()).isPresent()) {
             throw new UserAlreadyExistException("User with email " + request.getEmail() + " already exists");
@@ -40,6 +51,13 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * This method handles the authentication of a user.
+     * It checks the user's credentials, retrieves the user's details, and generates a JWT for the user.
+     * @param request The authentication request.
+     * @return AuthenticationResponse containing the JWT and a success message.
+     * @throws UsernameNotFoundException if the user's credentials are invalid or the user is not found.
+     */
     public AuthenticationResponse authenticateUser(AuthenticationRequest request) {
 
         try{  authenticationManager.authenticate(

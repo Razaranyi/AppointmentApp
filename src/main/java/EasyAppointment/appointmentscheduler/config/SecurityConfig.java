@@ -1,6 +1,5 @@
 package EasyAppointment.appointmentscheduler.config;
 
-import EasyAppointment.appointmentscheduler.models.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,10 @@ import static EasyAppointment.appointmentscheduler.models.Role.USER;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-
-
+/**
+ * This is the configuration class for the application's security.
+ * It handles the configuration of the security filter chain, the authentication provider, and the URL white list.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -31,8 +32,14 @@ public class SecurityConfig {
             "/api/home",};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-//    private final LogoutHandler logoutHandler;
 
+    /**
+     * This method provides a SecurityFilterChain bean.
+     * It configures the HTTP security, including the URL white list, the session management, and the authentication provider.
+     * @param http The HttpSecurity.
+     * @return The SecurityFilterChain.
+     * @throws Exception if an error occurs during the configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -59,5 +66,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
-

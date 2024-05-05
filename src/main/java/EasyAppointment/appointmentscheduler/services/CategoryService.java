@@ -10,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class provides services related to categories.
+ * It uses Spring's @Service annotation to indicate that it's a service class.
+ * It uses Lombok's @RequiredArgsConstructor to automatically generate a constructor with required fields.
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -24,6 +29,11 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method initializes categories.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param categories A list of category names.
+     */
    @Transactional
     public void initialCategories(List<String> categories){
         categories.forEach(category -> {
@@ -33,6 +43,11 @@ public class CategoryService {
         });
     }
 
+    /**
+     * This method retrieves a random order of categories.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @return A list of CategoryDto objects.
+     */
     @Transactional(readOnly = true)
     public List<CategoryDto> getRandomOrderCategories() {
         return categoryRepository

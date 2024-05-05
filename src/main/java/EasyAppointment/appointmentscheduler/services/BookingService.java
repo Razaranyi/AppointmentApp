@@ -21,9 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+/**
+ * This class provides services related to bookings.
+ * It uses Spring's @Service annotation to indicate that it's a service class.
+ * It uses Lombok's @RequiredArgsConstructor to automatically generate a constructor with required fields.
+ */
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,13 @@ public class BookingService {
     private final ServiceProviderRepository serviceProviderRepository;
     private final UserRepository userRepository;
 
+
+    /**
+     * This method creates a new booking.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param request The request containing the booking data.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional
     public ApiResponse<BookingDTO> createNewBooking(ApiRequest<BookingDTO> request) {
         Set<Appointment> appointments = new HashSet<>(appointmentRepository.findAllById(request.getData().getAppointmentsIds()));
@@ -67,6 +79,13 @@ public class BookingService {
         return new ApiResponse<>(true, "Booking created successfully", new BookingDTO(booking));
     }
 
+    /**
+     * This method retrieves all booked appointments for the currently authenticated user.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param pastBookings A boolean indicating whether to include past bookings.
+     * @return An ApiResponse object containing the result of the operation.
+     */
+
     @Transactional(readOnly = true)
     public ApiResponse<List<AppointmentDTO>> getAllUserBookedAppointments(boolean pastBookings) {
         User user = userRepository.findByEmail(AuthHelper.getCaller())
@@ -87,7 +106,12 @@ public class BookingService {
         return new ApiResponse<>(true, "Booked appointments fetched successfully", appointmentDTOs);
     }
 
-
+    /**
+     * This method cancels a booking.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param appointmentId The ID of the appointment to cancel.
+     * @return An ApiResponse object containing the result of the operation.
+     */
 
     @Transactional
     public ApiResponse<BookingDTO> cancelBooking(long appointmentId) {
@@ -112,7 +136,6 @@ public class BookingService {
 
 
     //this is a function to cancel a booking containing multiple appointments but it is not possible in the ui the book several appointments at once so it's comment out
-
 
 
     //    @Transactional

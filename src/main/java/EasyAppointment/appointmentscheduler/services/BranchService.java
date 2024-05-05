@@ -12,11 +12,7 @@ import EasyAppointment.appointmentscheduler.repositories.ServiceProviderReposito
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * This class provides services related to branches.
+ * It uses Spring's @Service annotation to indicate that it's a service class.
+ * It uses Lombok's @RequiredArgsConstructor to automatically generate a constructor with required fields.
+ */
 @Service
 @RequiredArgsConstructor
 public class BranchService {
@@ -34,6 +34,15 @@ public class BranchService {
     private final BranchRepository branchRepository;
     private final ServiceProviderRepository serviceProviderRepository;
 
+
+    /**
+     * This method adds a new branch.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param request The request containing the branch data.
+     * @param userEmail The email of the user who is adding the branch.
+     * @return An ApiResponse object containing the result of the operation.
+     * @throws RuntimeException if the user or business is not found, or if the branch already exists.
+     */
     @Transactional(readOnly = false)
     public ApiResponse<BranchDTO> addBranch(ApiRequest<BranchDTO> request, String userEmail) throws RuntimeException {
 
@@ -70,6 +79,12 @@ public class BranchService {
         return new ApiResponse<>(true, "branch created successfully", branchDTO);
     }
 
+    /**
+     * This method retrieves all branches for a specific business.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param businessId The ID of the business.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional(readOnly = true)
     public ApiResponse<List<BranchDTO>> getBranchesForBusinessId(long businessId) {
         Business business = businessRepository.findById(businessId)
@@ -82,6 +97,14 @@ public class BranchService {
         return new ApiResponse<>(true, "Branches fetched successfully", branchDTOs);
     }
 
+
+    /**
+     * This method retrieves the ID of a specific branch for a specific business.
+     * It uses Spring's @Transactional annotation to ensure the operation is performed within a transaction.
+     * @param businessId The ID of the business.
+     * @param branchName The name of the branch.
+     * @return An ApiResponse object containing the result of the operation.
+     */
     @Transactional(readOnly = true)
     public ApiResponse<BranchDTO> getBranchId(Long businessId, String branchName) {
         Business business = businessRepository.findById(businessId)
