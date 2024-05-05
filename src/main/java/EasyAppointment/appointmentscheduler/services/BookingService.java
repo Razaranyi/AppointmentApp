@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -143,4 +144,25 @@ public class BookingService {
         User user = booking.getUser();
         return new ApiResponse<>(true, "User found", new UserDTO(user));
     }
+
+    @Transactional(readOnly = true)
+public List<AppointmentDTO> getMyBookings(LocalDate start, LocalDate end) {
+    User user = userRepository.findByEmail(AuthHelper.getCaller())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    List<Booking> bookings = bookingRepository.findByUserId(user.getId());
+    if (bookings.isEmpty()) {
+        throw new NoSuchElementException("No bookings found");
+    }
+
+    List<Appointment> appointments = bookings.stream()
+            .flatMap(booking -> booking.getAppointments().stream())
+            .filter(appointment ->
+                !appointment.getStartTime().toLocalDate().isBefore(start) &&
+                !appointment.getEndTime().toLocalDate().isAfter(end))
+            .sorted(Comparator.comparing(Appointment::getStartTime))
+            .collect(Collectors.toList());
+
+    return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+}
 }

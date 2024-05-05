@@ -19,6 +19,7 @@ public class AppointmentDTO implements DTOInterface{
     private Long bookingId;
     private Long serviceProviderId;
     private String bookingUserName;
+    private String bookedBusinessName;
 
     public AppointmentDTO(Appointment appointment) {
         this.id = appointment.getId();
@@ -30,6 +31,8 @@ public class AppointmentDTO implements DTOInterface{
 
         if (appointment.getBooking() != null) {
             this.bookingUserName = appointment.getBooking().getUser().getFullName();
+            this.bookedBusinessName = appointment.getServiceProvider().getBranch().getBusiness().getName();
         }
+
     }
 }
