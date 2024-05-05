@@ -4,7 +4,7 @@ import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
 import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
-import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnsBusinessException;
+import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnException;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.Category;
 import EasyAppointment.appointmentscheduler.models.User;
@@ -12,8 +12,6 @@ import EasyAppointment.appointmentscheduler.repositories.BusinessRepository;
 import EasyAppointment.appointmentscheduler.repositories.CategoryRepository;
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +32,13 @@ public class BusinessService {
 
     @Transactional
     public ApiResponse<BusinessDTO> addBusiness(ApiRequest<BusinessDTO> request, String userEmail)
-            throws UserAlreadyOwnsBusinessException, UsernameNotFoundException {
+            throws UserAlreadyOwnException, UsernameNotFoundException {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
 
-        // TODO: Uncomment this block of code
-//        if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
-//            throw new UserAlreadyOwnsBusinessException("User with email " + userEmail + " already owns a business");
-//        }
+        if (userRepository.existsByEmailAndBusinessIsNotNull(userEmail)) {
+            throw new UserAlreadyOwnException("User with email " + userEmail + " already owns a business");
+        }
 
         // Convert category names to category entities
         Set<String> categoryNames = request.getData().getBusinessCategories();

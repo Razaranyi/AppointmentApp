@@ -62,8 +62,8 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UserAlreadyOwnsBusinessException.class)
-    public ResponseEntity<Object> handleUserAlreadyOwnsBusiness(UserAlreadyOwnsBusinessException ex) {
+    @ExceptionHandler(UserAlreadyOwnException.class)
+    public ResponseEntity<Object> handleUserAlreadyOwnsBusiness(UserAlreadyOwnException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.BranchDTO;
+import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnException;
 import EasyAppointment.appointmentscheduler.models.Branch;
 import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.models.ServiceProvider;
@@ -38,12 +39,18 @@ public class BranchService {
 
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+
         Business business = businessRepository.findByUsersContains(user)
                 .orElseThrow(() -> new RuntimeException("Business not found for user: " + userEmail));
+
         Set<ServiceProvider> serviceProviders = new HashSet<>();
 
         if (request.getData().getServiceProvidersIds() != null) {
             serviceProviders = new HashSet<>(serviceProviderRepository.findAllById(request.getData().getServiceProvidersIds()));
+        }
+
+        if (branchRepository.existsByNameAndBusiness(request.getData().getName(), business)) {
+            throw new UserAlreadyOwnException("Branch with name " + request.getData().getName() + " already exists for business");
         }
 
         Branch newBranch = Branch.builder()
@@ -76,8 +83,6 @@ public class BranchService {
     }
 
     @Transactional(readOnly = true)
-    @JsonManagedReference
-    @JsonBackReference
     public ApiResponse<BranchDTO> getBranchId(Long businessId, String branchName) {
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() -> new RuntimeException("Business not found with id: " + businessId));

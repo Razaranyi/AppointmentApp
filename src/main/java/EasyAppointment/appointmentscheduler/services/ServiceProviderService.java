@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.services;
 
 import EasyAppointment.appointmentscheduler.DTO.ServiceProviderDTO;
+import EasyAppointment.appointmentscheduler.exception.UserAlreadyOwnException;
 import EasyAppointment.appointmentscheduler.models.*;
 import EasyAppointment.appointmentscheduler.repositories.*;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
@@ -19,10 +20,8 @@ import java.util.stream.Collectors;
 public class ServiceProviderService {
     private final BranchRepository branchRepository;
     private final ServiceProviderRepository serviceProviderRepository;
-    private final AppointmentRepository appointmentRepository;
     private final BusinessRepository businessRepository;
     private final AppointmentService appointmentService;
-    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public ApiResponse<List<ServiceProviderDTO>> getServiceProviderListByBranch(Long branchId,Long businessId) {
@@ -77,7 +76,7 @@ public class ServiceProviderService {
         }
 
         if (serviceProviderRepository.existsByNameAndBranchId(request.getData().getName(), branchId)){
-            throw new IllegalArgumentException("Service Provider already exists");
+            throw new UserAlreadyOwnException("Service Provider already exists in the branch");
         }
 
         try {

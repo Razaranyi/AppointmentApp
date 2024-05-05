@@ -2,7 +2,6 @@ package EasyAppointment.appointmentscheduler.controllers;
 
 import EasyAppointment.appointmentscheduler.DTO.BusinessDTO;
 import EasyAppointment.appointmentscheduler.auth.AuthHelper;
-import EasyAppointment.appointmentscheduler.models.Business;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
 import EasyAppointment.appointmentscheduler.services.BusinessService;
@@ -10,14 +9,8 @@ import EasyAppointment.appointmentscheduler.util.ControllerUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/business")

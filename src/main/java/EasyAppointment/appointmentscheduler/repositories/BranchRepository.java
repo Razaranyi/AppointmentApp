@@ -11,4 +11,6 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
     List<Branch> findByBusiness(Business business);
 
     Optional<Object> findByNameAndBusiness(String branchName, Business business);
+
+    boolean existsByNameAndBusiness(String name, Business business);
 }
