@@ -1,6 +1,7 @@
 package EasyAppointment.appointmentscheduler.controllers;
 
 import EasyAppointment.appointmentscheduler.DTO.FavoriteDTO;
+import EasyAppointment.appointmentscheduler.auth.AuthHelper;
 import EasyAppointment.appointmentscheduler.models.Favorite;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.ApiResponse;
@@ -30,8 +31,7 @@ public class FavoriteController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<FavoriteDTO>> addFavorite( // add business to the favorites
             @PathVariable Long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+        String userEmail = AuthHelper.getCaller();
 
             return ResponseEntity.ok(favoriteService.addFavorite(id, userEmail));
     }
