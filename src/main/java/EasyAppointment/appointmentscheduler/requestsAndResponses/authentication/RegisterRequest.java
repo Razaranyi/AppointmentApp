@@ -1,4 +1,4 @@
-package EasyAppointment.appointmentscheduler.auth;
+package EasyAppointment.appointmentscheduler.requestsAndResponses.authentication;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

@@ -3,6 +3,7 @@ package EasyAppointment.appointmentscheduler.auth;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationRequest;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationResponse;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.RegisterRequest;
 import EasyAppointment.appointmentscheduler.util.ControllerUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

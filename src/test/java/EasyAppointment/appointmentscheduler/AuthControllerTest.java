@@ -3,7 +3,7 @@ package EasyAppointment.appointmentscheduler;
 import EasyAppointment.appointmentscheduler.auth.AuthController;
 import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.AuthenticationResponse;
 import EasyAppointment.appointmentscheduler.auth.AuthenticationService;
-import EasyAppointment.appointmentscheduler.auth.RegisterRequest;
+import EasyAppointment.appointmentscheduler.requestsAndResponses.authentication.RegisterRequest;
 import EasyAppointment.appointmentscheduler.exception.UserAlreadyExistException;
 import EasyAppointment.appointmentscheduler.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
