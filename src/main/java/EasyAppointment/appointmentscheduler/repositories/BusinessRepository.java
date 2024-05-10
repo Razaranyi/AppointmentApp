@@ -19,4 +19,13 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
      * @return An optional business that contains the specified user.
      */
     Optional<Business> findByUsersContains(User user);
+
+
+   /**
+     * Checks if a business with the specified name exists.
+     * @param name The name of the business.
+     * @return A boolean indicating whether a business with the specified name exists.
+     */
+
+    boolean existsByName(String name);
 }

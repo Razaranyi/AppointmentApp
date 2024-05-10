@@ -106,6 +106,19 @@ public class ServiceProviderService {
             throw new UserAlreadyOwnException("Service Provider already exists in the branch");
         }
 
+        boolean[] workingDays = request.getData().getWorkingDays();
+        boolean isWorking = false;
+        for (boolean workingDay : workingDays) {
+            if (workingDay) {
+                isWorking = true;
+                break;
+            }
+        }
+        if (!isWorking){
+            throw new IllegalArgumentException("Service Provider must have at least one working day");
+        }
+        System.out.println("Request: " + request.getData().toString());
+
         try {
             ServiceProvider.ServiceProviderBuilder serviceProviderBuilder = ServiceProvider.builder()
                     .name(request.getData().getName())
